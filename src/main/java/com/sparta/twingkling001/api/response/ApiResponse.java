@@ -22,11 +22,11 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
-    public static ApiResponse<?> success(com.sparta.twingkling.api.response.SuccessType successType) {
+    public static ApiResponse<?> success(SuccessType successType) {
         return new ApiResponse<>(successType.getHttpStatusCode(), successType.getMessage());
     }
 
-    public static <T> ApiResponse<T> success(com.sparta.twingkling.api.response.SuccessType successType, T data) {
+    public static <T> ApiResponse<T> success(SuccessType successType, T data) {
         return new ApiResponse<T>(successType.getHttpStatusCode(), successType.getMessage(), data);
     }
 
