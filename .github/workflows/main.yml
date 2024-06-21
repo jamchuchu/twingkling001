@@ -1,0 +1,34 @@
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+  # docker 실행
+  docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+          # gradlew 스크립트에 실행 권한을 부여한다
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        
+      - name: make image
+        run: docker build -t twingkling01image .
+
+      - name: run container and test
+        run: docker run --rm -v ${{ github.workspace }}:/app -w /app twingkling01image ./gradlew clean test
+
+      - name: Docker Hub login
+        run: echo ${{ secrets.PASSWORD3 }} | docker login -u ${{ secrets.USERNAME }} --password-stdin
+  
+      - name: tag image
+        run: docker tag twingkling01image:latest gpals5987/twingkling:latest
+
+      - name: locker HUB PUSH
+        run: docker push gpals5987/twingkling:latest
