@@ -1,6 +1,6 @@
 FROM amazoncorretto:21
 
-COPY ../twingkling01 .
+COPY . .
 
 RUN chmod +x ./gradlew
 
