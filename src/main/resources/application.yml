@@ -19,6 +19,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+#  data:
+#    redis:
+#      host: 43.203.234.52
+#      post: 6379
+
+
 #logging:
 #    level:
 #      org.hibernate.SQL: debug
