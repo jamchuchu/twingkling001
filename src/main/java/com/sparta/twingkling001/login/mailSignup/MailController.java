@@ -1,17 +1,14 @@
-package com.sparta.twingkling001.login.mail;
+package com.sparta.twingkling001.login.mailSignup;
 
 import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
-import com.sparta.twingkling001.member.entity.Member;
 import com.sparta.twingkling001.member.service.MemberService;
 import com.sparta.twingkling001.redis.RedisService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +17,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth/mail/naver")
+@RequestMapping("/api/auth/permit/mail/naver")
 @RequiredArgsConstructor
 public class MailController {
     private final MailService mailService;

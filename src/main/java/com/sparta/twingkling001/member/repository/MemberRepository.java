@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT COUNT(m.id) FROM Member m WHERE m.email = :email")
-    public Long getMemberByEmail(String email);
+    public Long getMemberSizeByEmail(String email);
+
+    @Query("SELECT m FROM Member m WHERE m.email = :email")
+    public Member getMemberByEmail(String email);
 }

@@ -1,4 +1,4 @@
-package com.sparta.twingkling001.login.mail;
+package com.sparta.twingkling001.login.mailSignup;
 
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.redis.RedisService;
