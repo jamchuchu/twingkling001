@@ -1,4 +1,4 @@
-package com.sparta.twingkling001.config;
+package com.sparta.twingkling001.redis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
