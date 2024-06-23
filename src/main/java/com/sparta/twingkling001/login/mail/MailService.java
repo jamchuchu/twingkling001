@@ -48,34 +48,6 @@ public class MailService {
     }
 
 
-//    public void checkUUID(String token, ){
-//
-//    }
-
-//    @Transactional
-//    public void add(MemberReqDtoByMail memberReqDtoByMail) throws Exception {
-//        MemberRE.insert(member);
-//        memberDao.updateToken(member);
-//
-//        String receiverMail = member.getEmail();
-//        MimeMessage message = mailSender.createMimeMessage();
-//
-//        message.addRecipients(RecipientType.TO, receiverMail);// 보내는 대상
-//        message.setSubject("Artify 회원가입 이메일 인증");// 제목
-//
-//        String body = "<div>"
-//                + "<h1> 안녕하세요. Artify 입니다</h1>"
-//                + "<br>"
-//                + "<p>아래 링크를 클릭하면 이메일 인증이 완료됩니다.<p>"
-//                + "<a href='http://localhost:3000/auth/verify?token=" + member.getToken() + "'>인증 링크</a>"
-//                + "</div>";
-//
-//        message.setText(body, "utf-8", "html");// 내용, charset 타입, subtype
-//        // 보내는 사람의 이메일 주소, 보내는 사람 이름
-//        message.setFrom(new InternetAddress("bitcamp1@naver.com", "Artify_Admin"));// 보내는 사람
-//        mailSender.send(message); // 메일 전송
-//    }
-//
     public boolean checkToken(String email, String token) {
         String originToken = redisService.getValues(email);
         if(token.equals(originToken)){
@@ -85,18 +57,5 @@ public class MailService {
         }
     }
 
-//    public long sendCertificationMail(String email) throws Exception {
-//        if (userProvider.checkEmail(email) == 1) {
-//            throw new BaseException(BaseResponseStatus.DUPLICATED_EMAIL);
-//        }
-//        try {
-//            String code = UUID.randomUUID().toString().substring(0, 6);
-//            sendMail(code, email);
-//
-//            return mailDao.createVerificationCode(code, email);
-//        } catch (Exception exception) {
-//            exception.printStackTrace();
-//            throw new Exception(BaseResponseStatus.DATABASE_ERROR);
-//        }
-//    }
+
 }

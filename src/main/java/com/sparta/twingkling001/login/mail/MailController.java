@@ -27,11 +27,6 @@ public class MailController {
     //회원가입
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Long>> signup(@RequestBody MemberReqDtoByMail memberReqDtoByMail) throws Exception {
-//         String nickname,
-//            String email,
-//            String password,
-//            HttpSession session
-
         //email 형식 인증 추가
 
 

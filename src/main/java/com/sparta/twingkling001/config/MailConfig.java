@@ -15,12 +15,15 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:application.yml")
-@ConfigurationProperties(prefix = "mail")
+@ConfigurationProperties(prefix = "spring.mail")
 @Getter
 @Setter
 @ToString
 @Slf4j
 public class MailConfig {
+    private String username;
+    private String password;
+    private int port;
 
     @Bean
     public JavaMailSender javaMailService() {
@@ -28,13 +31,11 @@ public class MailConfig {
 //
 
         javaMailSender.setHost("smtp.naver.com");
-        javaMailSender.setUsername("jjhhh6845"); // 네이버 아이디
-        javaMailSender.setPassword("jhjh797913!@"); // 네이버 비밀번호
+        javaMailSender.setUsername(username); // 네이버 아이디
+        javaMailSender.setPassword(password); // 네이버 비밀번호
 
         log.info(javaMailSender.getPassword());
-//        javaMailSender.setUsername(username); // 네이버 아이디
-//        javaMailSender.setPassword(password); // 네이버 비밀번호
-        javaMailSender.setPort(465); // 메일 인증서버 포트
+        javaMailSender.setPort(port); // 메일 인증서버 포트
         javaMailSender.setJavaMailProperties(getMailProperties()); // 메일 인증서버 정보 가져오기
 
         return javaMailSender;
