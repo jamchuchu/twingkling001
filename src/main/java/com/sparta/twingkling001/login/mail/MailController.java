@@ -1,8 +1,11 @@
 package com.sparta.twingkling001.login.mail;
 
+import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
+import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
+import com.sparta.twingkling001.member.entity.Member;
 import com.sparta.twingkling001.member.service.MemberService;
 import com.sparta.twingkling001.redis.RedisService;
 import jakarta.servlet.http.HttpSession;
@@ -21,8 +24,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MailController {
     private final MailService mailService;
-    private final MemberService memberService;
     private final RedisService redisService;
+    private final MemberService memberService;
 
     //회원가입
     @PostMapping("/signup")
@@ -30,16 +33,16 @@ public class MailController {
         //email 형식 인증 추가
 
 
+
         String token = UUID.randomUUID().toString();
         memberReqDtoByMail.setToken(token);
 
-        //db 저장
-        redisService.setValues(memberReqDtoByMail.getEmail(), token);
+        //redis 저장
+        redisService.setValues(memberReqDtoByMail.getEmail(), memberReqDtoByMail);
 
         //메일 전송
         mailService.sendMail(token, memberReqDtoByMail.getEmail());
 
-//         Long response = memberService.addMemberByMail(memberReqDtoByMail);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.CREATED, 0L));
@@ -48,14 +51,18 @@ public class MailController {
 
     //토큰 검증 및 인증
     @GetMapping("/verify")
-    public ResponseEntity<ApiResponse<String>> verifyEmail(HttpSession session, @RequestParam String email, String token){
+    public ResponseEntity<ApiResponse<Object>> verifyEmail(HttpSession session, @RequestParam String email, String token){
         //토큰 일치시 DB 저장
-
-        //토큰 검증
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.CREATED, mailService.checkToken(email, token)? "토큰일치": "토큰 불일치"));
-//        }
-
+        if(mailService.checkToken(email, token)){
+            SimpleMemberRespDto response = memberService.addMember(redisService.getValues(email, MemberReqDtoByMail.class));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ApiResponse.success(SuccessType.CREATED, response));
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(ErrorType.INVALID_TOKEN,  ErrorType.INVALID_TOKEN.getMessage()));
+//
+        }
     }
 }

@@ -49,7 +49,8 @@ public class MailService {
 
 
     public boolean checkToken(String email, String token) {
-        String originToken = redisService.getValues(email);
+        MemberReqDtoByMail dto = redisService.getValues(email, MemberReqDtoByMail.class);
+        String originToken = (dto.getToken());
         if(token.equals(originToken)){
             return true;
         }else{
