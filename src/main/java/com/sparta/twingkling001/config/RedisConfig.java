@@ -1,14 +1,28 @@
 package com.sparta.twingkling001.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.webresources.Cache;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Configuration
@@ -26,10 +40,47 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());  // JSON 문자열 저장을 위해
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
         return redisTemplate;
     }
+
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
+    }
+
+//    @Bean
+//    public CacheManager cacheManager() {
+//        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+//                .allowIfBaseType(Object.class)  // 모든 클래스 허용
+//                .build();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.activateDefaultTyping(ptv,ObjectMapper.DefaultTyping.NON_FINAL);
+//
+//        //localDateTime 역직렬화 세팅
+//        objectMapper.registerModule(new JavaTimeModule());
+//        //
+//
+//        GenericJackson2JsonRedisSerializer redisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+//
+//        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+//                .entryTtl(Duration.ofDays(5))
+//                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+//                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer));
+//
+//        Map<String, RedisCacheConfiguration> configurations = new HashMap<>();
+//        configurations.put(ConstantPool.CacheName.POST, defaultConfig.entryTtl(Duration.ofDays(1)));
+//        configurations.put(ConstantPool.CacheName.VIEWS, defaultConfig.entryTtl(Duration.ofDays(1)));
+//
+//        return RedisCacheManager.RedisCacheManagerBuilder
+//                .fromConnectionFactory(redisConnectionFactory())
+//                .cacheDefaults(defaultConfig)
+//                .withInitialCacheConfigurations(configurations)
+//                .build();
+//    }
 }

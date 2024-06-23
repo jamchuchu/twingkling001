@@ -1,5 +1,7 @@
 package com.sparta.twingkling001.redis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -17,10 +19,12 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
-    public void setValues(String key, String data) {
+    public void setValues(String key, Object data) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(data);
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        values.set(key, data);
+        values.set(key, json);
     }
 
     public void setValues(String key, String data, Duration duration) {
@@ -31,10 +35,26 @@ public class RedisService {
     @Transactional(readOnly = true)
     public String getValues(String key) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        if (values.get(key) == null) {
-            return "false";
+        String json = (String) values.get(key);
+        if (json == null) {
+            return null;
         }
-        return (String) values.get(key);
+        return values.get(key).toString();
+    }
+
+    @Transactional(readOnly = true)
+    public <T> T getValues(String key, Class<T> valueType) {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        String json = (String) values.get(key);
+        if (json == null) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(json, valueType);
+        } catch (JsonProcessingException e) {
+            log.error("Error deserializing JSON", e);
+            return null;
+        }
     }
 
     public void deleteValues(String key) {

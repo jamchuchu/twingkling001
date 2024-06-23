@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorType {
-    INVALID_PERMISSION(org.springframework.http.HttpStatus.UNAUTHORIZED, "Permission is invalid");
+    INVALID_TOKEN(org.springframework.http.HttpStatus.UNAUTHORIZED, "토큰 불일치"),
+    INVALID_EMAIL_FORM(org.springframework.http.HttpStatus.UNAUTHORIZED, "이메일 형식이 올바르지 않습니다"),
+    INVALID_EMAIL_DUPLE(org.springframework.http.HttpStatus.UNAUTHORIZED, "이메일이 중복 되었습니다");
 
     private final HttpStatus httpStatus;
     private final String message;
