@@ -60,7 +60,7 @@ public class MailController {
 
     //토큰 검증 및 인증
     @GetMapping("/verify")
-    public ResponseEntity<ApiResponse<Object>> verifyEmail(HttpSession session, @RequestParam String email, String token){
+    public ResponseEntity<ApiResponse<Object>> verifyEmail( @RequestParam String email, String token){
         //토큰 일치시 DB 저장
         if(mailService.checkToken(email, token)){
             SimpleMemberRespDto response = memberService.addMember(redisService.getValues(email, MemberReqDtoByMail.class));
@@ -71,7 +71,7 @@ public class MailController {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error(ErrorType.INVALID_TOKEN,  ErrorType.INVALID_TOKEN.getMessage()));
-//
+
         }
     }
 }
