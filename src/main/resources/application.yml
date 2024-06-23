@@ -23,6 +23,18 @@ spring:
     redis:
       host: 43.203.234.52
       port: 6379
+#
+#  mail:
+#    host: smtp.naver.com
+#    port: 465
+#    username: jjhhh6845
+#    password: jhjh797913!@
+#    properties:
+#      mail.transport.protocol: smtp
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
+#      mail.smtp.ssl.trust: smtp.naver.com
+#      mail.smtp.ssl.enable: true
 
 
 #logging:
