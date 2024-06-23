@@ -32,7 +32,7 @@ public class RoleController {
         Role response = roleService.getRole(1);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
 
 }

@@ -29,10 +29,19 @@ public class MailController {
 
     //회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Long>> signup(@RequestBody MemberReqDtoByMail memberReqDtoByMail) throws Exception {
+    public ResponseEntity<ApiResponse<?>> signup(@RequestBody MemberReqDtoByMail memberReqDtoByMail) throws Exception {
         //email 형식 인증 추가
+        if(!memberService.checkEmailForm(memberReqDtoByMail.getEmail())){
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(ErrorType.INVALID_EMAIL_FORM));
+        }
 
-
+        if(!memberService.checkDuple(memberReqDtoByMail.getEmail())){
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(ErrorType.INVALID_EMAIL_DUPLE));
+        }
 
         String token = UUID.randomUUID().toString();
         memberReqDtoByMail.setToken(token);
@@ -45,7 +54,7 @@ public class MailController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.CREATED, 0L));
+                .body(ApiResponse.success(SuccessType.SEND_EMAIL, SuccessType.SEND_EMAIL.getMessage()));
     }
 
 
@@ -57,7 +66,7 @@ public class MailController {
             SimpleMemberRespDto response = memberService.addMember(redisService.getValues(email, MemberReqDtoByMail.class));
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(ApiResponse.success(SuccessType.CREATED, response));
+                    .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
         }else{
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
