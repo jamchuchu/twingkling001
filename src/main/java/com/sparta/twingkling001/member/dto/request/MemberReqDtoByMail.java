@@ -10,7 +10,6 @@ public class MemberReqDtoByMail {
     private String nickname;
     private String email;
     private String password;
-    private HttpSession session;
 
     private String token;
 

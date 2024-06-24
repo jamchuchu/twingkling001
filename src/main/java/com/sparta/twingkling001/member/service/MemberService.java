@@ -1,12 +1,12 @@
 package com.sparta.twingkling001.member.service;
 
 
-import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
 import com.sparta.twingkling001.member.entity.Member;
 import com.sparta.twingkling001.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,16 +17,17 @@ import java.util.regex.Pattern;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public SimpleMemberRespDto addMember(MemberReqDtoByMail memberReqDtoByMail) {
         Member member = Member.builder()
                 .roleId(1L)
                 .email(memberReqDtoByMail.getEmail())
-                .password(memberReqDtoByMail.getPassword())
+                .password(passwordEncoder.encode(memberReqDtoByMail.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .deletedYn(false)
                 .build();
-        return new SimpleMemberRespDto(memberRepository.save(member).getId());
+        return new SimpleMemberRespDto(memberRepository.save(member).getMemberId());
     }
 
     //이메일 형식 체크
@@ -41,7 +42,7 @@ public class MemberService {
     }
     //중복 체크
     public boolean checkDuple(String email)   {
-        Long size = memberRepository.getMemberByEmail(email);
+        Long size = memberRepository.getMemberSizeByEmail(email);
         if(size != 0){
             System.out.println(false);
             return false;

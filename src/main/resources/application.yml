@@ -3,9 +3,9 @@ spring:
     active: dev
 
   datasource:
-    url: ${SECRETS_DB_URL}
-    username: ${SECRETS_DB_USERNAME}
-    password: ${SECRETS_DB_PASSWORD}
+    url: ${SECRETS.DB_URL}
+    username: ${SECRETS.DB_USERNAME}
+    password: ${SECRETS.DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
@@ -19,14 +19,14 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: ${SECRETS.REDIS_HOST}
+      port: ${SECRETS.REDIS_PORT}
 
   mail:
     host: smtp.naver.com
     port: 465
-    username: ${SPRING_MAIL_USERNAME}
-    password: ${SPRING_MAIL_PASSWORD}
+    username: ${SECRETS.SPRING_MAIL_USERNAME}
+    password: ${SECRETS.SPRING_MAIL_PASSWORD}
     properties:
       mail:
         smtp:

@@ -25,8 +25,6 @@ public class MailConfig {
     private String password;
     private int port;
     private Properties properties;
-
-
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
@@ -35,7 +33,7 @@ public class MailConfig {
         javaMailSender.setUsername(username); // 네이버 아이디
         javaMailSender.setPassword(password); // 네이버 비밀번호
 
-        log.info(javaMailSender.getPassword());
+
         javaMailSender.setPort(port); // 메일 인증서버 포트
         javaMailSender.setJavaMailProperties(properties);
 
