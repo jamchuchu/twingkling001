@@ -20,24 +20,35 @@ public class MemberAddressService {
                 .addressId(reqDto.getAddressId())
                 .isPrimary(reqDto.isPrimary())
                 .build();
+        if(reqDto.isPrimary()) {
+            MemberAddress mainAddress = memberAddressRepository.findByMemberIdAndIsPrimary(reqDto.getMemberId(), true);
+            if(mainAddress != null){
+                memberAddressRepository.updateMainToSubByMemberId(reqDto.getMemberId());
+                deleteMemberSubAddressMoreThanCount(reqDto.getMemberId());
+            }
+        }
+        if(!reqDto.isPrimary()){
+            deleteMemberSubAddressMoreThanCount(reqDto.getMemberId());
+        }
         return memberAddressRepository.save(memberAddress).getMemberAddressId();
     }
 
     public List<MemberAddressRespDto> getMemberAddresses(Long memberId){
-        return memberAddressRepository.getMemberAddresses(memberId);
+        return memberAddressRepository.getMemberAddressesByMemberId(memberId);
     }
 
-    public Long updateMemberAddress(Long memberAddressId, MemberAddressReqDto reqDto) {
-        return memberAddressRepository.updateMemberAddress(memberAddressId, reqDto).getMemberAddressId();
+    public void updateMemberAddress(Long memberAddressId, MemberAddressReqDto reqDto) {
+        memberAddressRepository.updateMemberAddress(memberAddressId, reqDto);
     }
 
-    public Long updateMemberAddressLevel(Long memberId, Long memberAddressId) {
-        MemberAddress mainAddress = memberAddressRepository.getMemberAddressByMemberIdAndIsPrimary(memberId);
+    // 메인이 있으면 서브로 내리고 원하는 것 메인 추가
+    public void updateMemberAddressLevel(Long memberId, Long memberAddressId) {
+        MemberAddress mainAddress = memberAddressRepository.findByMemberIdAndIsPrimary(memberId, true);
         if(mainAddress != null){
-            memberAddressRepository.updateSubByMemberId(memberId);
+            memberAddressRepository.updateMainToSubByMemberId(memberId);
             deleteMemberSubAddressMoreThanCount(memberId);
         }
-        return memberAddressRepository.updatePrimaryByMemberAddressId(memberAddressId).getMemberAddressId();
+        memberAddressRepository.updatePrimaryByMemberAddressId(memberAddressId);
     }
 
     public void deleteMemberAddress(Long memberAddressId){

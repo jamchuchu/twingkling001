@@ -61,16 +61,27 @@ public class MemberService {
     }
     //조회
     public MemberDetailRespDto getMemberDetail(long memberId) {
-        return memberDetailRepository.getMemberDetail(memberId);
+        MemberDetail memberDetail = memberDetailRepository.getMemberDetailByMemberId(memberId);
+        MemberDetailRespDto respDto = MemberDetailRespDto.builder()
+                .memberDetailId(memberDetail.getMemberDetailId())
+                .memberId(memberDetail.getMemberId())
+                .age(memberDetail.getAge())
+                .birth(memberDetail.getBirth())
+                .gender(memberDetail.getGender())
+                .name(memberDetail.getName())
+                .nickname(memberDetail.getNickname())
+                .phoneNumber(memberDetail.getPhoneNumber())
+                .build();
+        return respDto;
     }
     //수정
-    public Long updateMemberDetail(MemberDetailReqDto reqDto) {
+    public void updateMemberDetail(MemberDetailReqDto reqDto) {
         MemberDetail memberDetail = new MemberDetail(reqDto);
-        return memberDetailRepository.update(memberDetail).getMemberDetailId();
+        memberDetailRepository.updateMemberDetail(memberDetail);
     }
     //삭제
     public void deleteMemberDetail(Long memberId) {
-        memberDetailRepository.delete(memberId);
+        memberDetailRepository.deleteMemberDetailByMemberIdEquals(memberId);
     }
 
 }

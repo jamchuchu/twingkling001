@@ -4,32 +4,37 @@ import com.sparta.twingkling001.member.dto.request.MemberAddressReqDto;
 import com.sparta.twingkling001.member.dto.response.MemberAddressRespDto;
 import com.sparta.twingkling001.member.entity.MemberAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
 public interface MemberAddressRepository extends JpaRepository<MemberAddress, Long> {
-    @Query ("SELECT com.sparta.twingkling001.member.dto.response.MemberAddressRespDto from MemberAddress where memberId = :memberId")
-    List<MemberAddressRespDto> getMemberAddresses(Long memberId);
+    List<MemberAddressRespDto> getMemberAddressesByMemberId(Long memberId);
 
-    @Query("Select ma from MemberAddress ma where ma.memberId = :memberId and ma.isPrimary = false order by ma.usedAt")
-    List<MemberAddress> getMemberSubAddresses(Long memberId);
+    @Query("SELECT ma FROM MemberAddress ma WHERE ma.memberId = :memberId AND ma.isPrimary = false ORDER BY ma.usedAt")
+    List<MemberAddress> getMemberSubAddresses(@Param("memberId") Long memberId);
 
-    MemberAddress getMemberAddressByMemberIdAndIsPrimary(Long memberId);
+    MemberAddress findByMemberIdAndIsPrimary(Long memberId, boolean isPrimary);
 
+    @Modifying
+    @Transactional
     @Query("UPDATE MemberAddress ma SET ma.addressId = :#{#reqDto.addressId} WHERE ma.memberAddressId = :memberAddressId")
-    MemberAddress updateMemberAddress(Long memberAddressId, MemberAddressReqDto reqDto);
+    void updateMemberAddress(@Param("memberAddressId") Long memberAddressId, @Param("reqDto") MemberAddressReqDto reqDto);
 
-    //sub -> main
-    @Query("update MemberAddress ma set ma.isPrimary = true where ma.memberAddressId = :memberAddressId")
-    MemberAddress updatePrimaryByMemberAddressId(Long memberAddressId);
+    @Modifying
+    @Transactional
+    @Query("UPDATE MemberAddress ma SET ma.isPrimary = true WHERE ma.memberAddressId = :memberAddressId")
+    void updatePrimaryByMemberAddressId(@Param("memberAddressId") Long memberAddressId);
 
-    //main -> sub
-    @Query("update MemberAddress ma set ma.isPrimary = false where ma.memberId = :memberId")
-    MemberAddress updateSubByMemberId(Long memberId);
+    @Modifying
+    @Transactional
+    @Query("UPDATE MemberAddress ma SET ma.isPrimary = false WHERE ma.memberId = :memberId")
+    void updateMainToSubByMemberId(@Param("memberId") Long memberId);
 
     void deleteMemberAddressByAddressId(Long memberAddressId);
-
-
-
 }

@@ -39,11 +39,11 @@ public class MemberController {
     }
 
     @PutMapping("/detail")
-    public ResponseEntity<ApiResponse<Long>> updateMemberDetail(@RequestBody MemberDetailReqDto reqDto) {
-        Long response = memberService.updateMemberDetail(reqDto);
+    public ResponseEntity<ApiResponse<?>> updateMemberDetail(@RequestBody MemberDetailReqDto reqDto) {
+        memberService.updateMemberDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS));
     }
 
     @DeleteMapping("/detail/{memberId}")
@@ -85,19 +85,19 @@ public class MemberController {
 
     //주소 1개 수정
     @PutMapping("/address/{memberAddressId}")
-    public ResponseEntity<ApiResponse<Long>> updateMemberAddress(@PathVariable Long memberAddressId,  MemberAddressReqDto reqDto) {
-        Long response = memberAddressService.updateMemberAddress(memberAddressId, reqDto);
+    public ResponseEntity<ApiResponse<?>> updateMemberAddress(@PathVariable Long memberAddressId,  MemberAddressReqDto reqDto) {
+        memberAddressService.updateMemberAddress(memberAddressId, reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS));
     }
     //서브 -> 메인으로 변경
     @PatchMapping("/address/{memberId}/{memberAddressId}")
     public ResponseEntity<ApiResponse<?>> updateMemberAddressLevel(@PathVariable Long memberId, Long memberAddressId) {
-        Long response = memberAddressService.updateMemberAddressLevel(memberId, memberAddressId);
+        memberAddressService.updateMemberAddressLevel(memberId, memberAddressId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS));
     }
 
 
