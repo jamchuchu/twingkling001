@@ -1,9 +1,13 @@
 package com.sparta.twingkling001.member.service;
 
 
+import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
+import com.sparta.twingkling001.member.dto.response.SimpleMemberDetailRespDto;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
 import com.sparta.twingkling001.member.entity.Member;
+import com.sparta.twingkling001.member.entity.MemberDetail;
+import com.sparta.twingkling001.member.repository.MemberDetailRepository;
 import com.sparta.twingkling001.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +21,7 @@ import java.util.regex.Pattern;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MemberDetailRepository memberDetailRepository;
     private final PasswordEncoder passwordEncoder;
 
     public SimpleMemberRespDto addMember(MemberReqDtoByMail memberReqDtoByMail) {
@@ -48,5 +53,20 @@ public class MemberService {
             return false;
         }
         return true;
+    }
+
+    //회원가입시 멤버 디테일 추가
+    public SimpleMemberDetailRespDto addMemberDetail(MemberDetailReqDto reqDto) {
+        MemberDetail md = new MemberDetail(reqDto);
+        return new SimpleMemberDetailRespDto(memberDetailRepository.save(md).getMemberDetailId());
+    }
+    //수정
+    public SimpleMemberDetailRespDto updateMemberDetail(MemberDetailReqDto reqDto) {
+        MemberDetail md = new MemberDetail(reqDto);
+        return new SimpleMemberDetailRespDto(memberDetailRepository.update(md).getMemberDetailId());
+    }
+    //삭제
+    public void deleteMemberDetail(Long memberId) {
+        memberDetailRepository.delete(memberId);
     }
 }
