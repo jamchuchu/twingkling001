@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.member.repository;
 
+import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
 import com.sparta.twingkling001.member.entity.MemberDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,6 @@ public interface MemberDetailRepository extends JpaRepository<MemberDetail, Long
     @Query("DELETE FROM MemberDetail md WHERE md.memberId = :memberId")
     public void delete(Long memberId);
 
-    @Query("SELECT md FROM MemberDetail md WHERE md.memberId = :memberId")
-    MemberDetail getMemberDetail(long memberId);
+    @Query("SELECT com.sparta.twingkling001.member.dto.response.MemberDetailRespDto FROM MemberDetail md WHERE md.memberId = :memberId")
+    MemberDetailRespDto getMemberDetail(long memberId);
 }

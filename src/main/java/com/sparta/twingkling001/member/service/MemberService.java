@@ -4,8 +4,7 @@ package com.sparta.twingkling001.member.service;
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
-import com.sparta.twingkling001.member.dto.response.SimpleMemberDetailRespDto;
-import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
+
 import com.sparta.twingkling001.member.entity.Member;
 import com.sparta.twingkling001.member.entity.MemberDetail;
 import com.sparta.twingkling001.member.repository.MemberDetailRepository;
@@ -25,7 +24,7 @@ public class MemberService {
     private final MemberDetailRepository memberDetailRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SimpleMemberRespDto addMember(MemberReqDtoByMail memberReqDtoByMail) {
+    public long addMember(MemberReqDtoByMail memberReqDtoByMail) {
         Member member = Member.builder()
                 .roleId(1L)
                 .email(memberReqDtoByMail.getEmail())
@@ -33,7 +32,7 @@ public class MemberService {
                 .createdAt(LocalDateTime.now())
                 .deletedYn(false)
                 .build();
-        return new SimpleMemberRespDto(memberRepository.save(member).getMemberId());
+        return memberRepository.save(member).getMemberId();
     }
 
     //이메일 형식 체크
@@ -50,25 +49,24 @@ public class MemberService {
     public boolean checkDuple(String email)   {
         Long size = memberRepository.getMemberSizeByEmail(email);
         if(size != 0){
-            System.out.println(false);
             return false;
         }
         return true;
     }
 
     //회원가입시 멤버 디테일 추가
-    public SimpleMemberDetailRespDto addMemberDetail(MemberDetailReqDto reqDto) {
-        MemberDetail md = new MemberDetail(reqDto);
-        return new SimpleMemberDetailRespDto(memberDetailRepository.save(md).getMemberDetailId());
+    public Long addMemberDetail(MemberDetailReqDto reqDto) {
+        MemberDetail memberDetail = new MemberDetail(reqDto);
+        return  memberDetailRepository.save(memberDetail).getMemberId();
     }
     //조회
     public MemberDetailRespDto getMemberDetail(long memberId) {
-        return new MemberDetailRespDto(memberDetailRepository.getMemberDetail(memberId));
+        return memberDetailRepository.getMemberDetail(memberId);
     }
     //수정
-    public SimpleMemberDetailRespDto updateMemberDetail(MemberDetailReqDto reqDto) {
-        MemberDetail md = new MemberDetail(reqDto);
-        return new SimpleMemberDetailRespDto(memberDetailRepository.update(md).getMemberDetailId());
+    public Long updateMemberDetail(MemberDetailReqDto reqDto) {
+        MemberDetail memberDetail = new MemberDetail(reqDto);
+        return memberDetailRepository.update(memberDetail).getMemberDetailId();
     }
     //삭제
     public void deleteMemberDetail(Long memberId) {

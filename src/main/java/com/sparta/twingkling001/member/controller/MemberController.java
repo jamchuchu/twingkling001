@@ -2,16 +2,18 @@ package com.sparta.twingkling001.member.controller;
 
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
+import com.sparta.twingkling001.member.dto.request.MemberAddressReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
+import com.sparta.twingkling001.member.dto.response.MemberAddressRespDto;
 import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
-import com.sparta.twingkling001.member.dto.response.SimpleMemberDetailRespDto;
-import com.sparta.twingkling001.member.entity.MemberAddress;
 import com.sparta.twingkling001.member.service.MemberAddressService;
 import com.sparta.twingkling001.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -22,8 +24,8 @@ public class MemberController {
 
     //개인 추가 정보 등록 (아이디 생성시 자동 생성)
     @PostMapping("/detail")
-    public ResponseEntity<ApiResponse<SimpleMemberDetailRespDto>> addMemberDetail(@RequestBody MemberDetailReqDto reqDto){
-        SimpleMemberDetailRespDto response = memberService.addMemberDetail(reqDto);
+    public ResponseEntity<ApiResponse<Long>> addMemberDetail(@RequestBody MemberDetailReqDto reqDto){
+        Long response = memberService.addMemberDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
@@ -37,8 +39,8 @@ public class MemberController {
     }
 
     @PutMapping("/detail")
-    public ResponseEntity<ApiResponse<SimpleMemberDetailRespDto>> updateMemberDetail(@RequestBody MemberDetailReqDto reqDto) {
-        SimpleMemberDetailRespDto response = memberService.updateMemberDetail(reqDto);
+    public ResponseEntity<ApiResponse<Long>> updateMemberDetail(@RequestBody MemberDetailReqDto reqDto) {
+        Long response = memberService.updateMemberDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
@@ -53,29 +55,61 @@ public class MemberController {
     }
 
 
-//    //주소들 작성
-//    @GetMapping("/")
-//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(ApiResponse.success(SuccessType.));
-//    }
-//
-//    //주소 수정
-//    @GetMapping("/")
-//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(ApiResponse.success(SuccessType.));
-//    }
-//
-//    //서브 주소 개수 파악 후 추가 입력
-//    @GetMapping("/")
-//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(ApiResponse.success(SuccessType.));
-//    }
+
+    //주소 작성
+    @PostMapping("/address")
+    public ResponseEntity<ApiResponse<Long>> addMemberAddress(@RequestBody MemberAddressReqDto reqDto) {
+        Long response = memberAddressService.addMemberAddress(reqDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success(SuccessType.SUCCESS_CREATE , response));
+    }
+
+    //서브 주소 개수 파악 후 추가 입력
+    @PostMapping("/address/sub")
+    public ResponseEntity<ApiResponse<?>> addMemberSubAddress(@RequestBody MemberAddressReqDto reqDto){
+        memberAddressService.deleteMemberSubAddressMoreThanCount(reqDto.getMemberId());
+        Long response = memberAddressService.addMemberAddress(reqDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
+    }
+
+    @GetMapping("/address/{memberId}")
+    public ResponseEntity<ApiResponse<List<MemberAddressRespDto>>> getMemberAddresses(@PathVariable Long memberId) {
+        List<MemberAddressRespDto> response = memberAddressService.getMemberAddresses(memberId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+    }
+
+    //주소 1개 수정
+    @PutMapping("/address/{memberAddressId}")
+    public ResponseEntity<ApiResponse<Long>> updateMemberAddress(@PathVariable Long memberAddressId,  MemberAddressReqDto reqDto) {
+        Long response = memberAddressService.updateMemberAddress(memberAddressId, reqDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+    }
+    //서브 -> 메인으로 변경
+    @PatchMapping("/address/{memberId}/{memberAddressId}")
+    public ResponseEntity<ApiResponse<?>> updateMemberAddressLevel(@PathVariable Long memberId, Long memberAddressId) {
+        Long response = memberAddressService.updateMemberAddressLevel(memberId, memberAddressId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+    }
+
+
+    @DeleteMapping("/address/{memberAddressId}")
+    public ResponseEntity<ApiResponse<?>> deleteMemberAddress(@PathVariable Long memberAddressId) {
+        memberAddressService.deleteMemberAddress(memberAddressId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS));
+    }
+
+
 
 
 }
