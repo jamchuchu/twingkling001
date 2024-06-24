@@ -11,14 +11,15 @@ import java.util.List;
 public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
 
     List<CartDetail> getCartDetailsByCartId(Long cartId);
+
     @Query("UPDATE CartDetail cd SET cd.quantity = :quantity WHERE cd.cartDetailId = :cartDetailId")
     void updateProductQuantity(Long cartDetailId, Long quantity);
-    void deleteCartDetailByCartDetailId(Long cartDetailId);
-
     @Query("UPDATE CartDetail cd SET cd.presentSaleYn = :true WHERE cd.productId = :productId")
     void updateProductSateTrue(Long productId);
     @Query("UPDATE CartDetail cd SET cd.presentSaleYn = :false WHERE cd.productId = :productId")
     void updateProductSateFalse(Long productId);
+
+    void deleteCartDetailByCartDetailId(Long cartDetailId);
 
 
 }
