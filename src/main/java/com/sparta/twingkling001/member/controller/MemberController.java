@@ -3,7 +3,10 @@ package com.sparta.twingkling001.member.controller;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
+import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberDetailRespDto;
+import com.sparta.twingkling001.member.entity.MemberAddress;
+import com.sparta.twingkling001.member.service.MemberAddressService;
 import com.sparta.twingkling001.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,14 +18,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class MemberController {
     private final MemberService memberService;
+    private final MemberAddressService memberAddressService;
 
     //개인 추가 정보 등록 (아이디 생성시 자동 생성)
-    @GetMapping("/detail")
+    @PostMapping("/detail")
     public ResponseEntity<ApiResponse<SimpleMemberDetailRespDto>> addMemberDetail(@RequestBody MemberDetailReqDto reqDto){
         SimpleMemberDetailRespDto response = memberService.addMemberDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
+    }
+    @GetMapping("/detail/{memberId}")
+    public ResponseEntity<ApiResponse<MemberDetailRespDto>> getMemberDetail(@PathVariable long memberId) {
+        MemberDetailRespDto response = memberService.getMemberDetail(memberId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
 
     @PutMapping("/detail")
@@ -34,12 +45,37 @@ public class MemberController {
     }
 
     @DeleteMapping("/detail/{memberId}")
-    public ResponseEntity<ApiResponse<?>> addMemberDetail(@PathVariable long memberId) {
+    public ResponseEntity<ApiResponse<?>> deleteMemberDetail(@PathVariable long memberId) {
         memberService.deleteMemberDetail(memberId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS));
     }
+
+
+//    //주소들 작성
+//    @GetMapping("/")
+//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(ApiResponse.success(SuccessType.));
+//    }
+//
+//    //주소 수정
+//    @GetMapping("/")
+//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(ApiResponse.success(SuccessType.));
+//    }
+//
+//    //서브 주소 개수 파악 후 추가 입력
+//    @GetMapping("/")
+//    public ResponseEntity<ApiResponse<?>> addMemberDetail() {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(ApiResponse.success(SuccessType.));
+//    }
 
 
 }

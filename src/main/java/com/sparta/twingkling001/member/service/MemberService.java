@@ -3,6 +3,7 @@ package com.sparta.twingkling001.member.service;
 
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
+import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberDetailRespDto;
 import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
 import com.sparta.twingkling001.member.entity.Member;
@@ -60,6 +61,10 @@ public class MemberService {
         MemberDetail md = new MemberDetail(reqDto);
         return new SimpleMemberDetailRespDto(memberDetailRepository.save(md).getMemberDetailId());
     }
+    //조회
+    public MemberDetailRespDto getMemberDetail(long memberId) {
+        return new MemberDetailRespDto(memberDetailRepository.getMemberDetail(memberId));
+    }
     //수정
     public SimpleMemberDetailRespDto updateMemberDetail(MemberDetailReqDto reqDto) {
         MemberDetail md = new MemberDetail(reqDto);
@@ -69,4 +74,5 @@ public class MemberService {
     public void deleteMemberDetail(Long memberId) {
         memberDetailRepository.delete(memberId);
     }
+
 }

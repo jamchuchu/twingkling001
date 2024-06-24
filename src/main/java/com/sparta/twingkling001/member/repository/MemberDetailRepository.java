@@ -11,4 +11,7 @@ public interface MemberDetailRepository extends JpaRepository<MemberDetail, Long
 
     @Query("DELETE FROM MemberDetail md WHERE md.memberId = :memberId")
     public void delete(Long memberId);
+
+    @Query("SELECT md FROM MemberDetail md WHERE md.memberId = :memberId")
+    MemberDetail getMemberDetail(long memberId);
 }
