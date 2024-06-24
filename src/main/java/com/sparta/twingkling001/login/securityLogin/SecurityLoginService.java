@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.login.securityLogin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twingkling001.member.dto.response.MemberRespDto;
 import com.sparta.twingkling001.member.entity.Member;
 import com.sparta.twingkling001.member.repository.MemberRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityLoginService implements UserDetailsService {
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

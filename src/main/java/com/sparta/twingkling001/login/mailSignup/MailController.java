@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth/permit/mail/naver")
+@RequestMapping("/api/auth/mail/naver")
 @RequiredArgsConstructor
 public class MailController {
     private final MailService mailService;

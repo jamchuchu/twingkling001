@@ -3,8 +3,10 @@ package com.sparta.twingkling001.login.securityLogin;
 import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ public class SecurityLoginController {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error(ErrorType.LOGIN_FAIL));
+
     }
     @GetMapping("/permit/logout")
     public ResponseEntity<ApiResponse<?>> logoutSuccess(){
