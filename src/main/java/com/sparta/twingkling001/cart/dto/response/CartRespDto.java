@@ -1,20 +1,15 @@
-package com.sparta.twingkling001.cart.entity;
+package com.sparta.twingkling001.cart.dto.response;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
-@Entity
-@Getter
 @NoArgsConstructor
+@Getter
+@Builder
 @AllArgsConstructor
-@Table(name = "cart")
-public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CartRespDto {
     private Long cartId;
     private Long memberId;
     private Boolean deletedYn;

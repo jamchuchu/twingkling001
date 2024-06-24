@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cart")
-public class Cart {
+@Table(name = "cart_detail")
+public class CartDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cartDetailId;
     private Long cartId;
-    private Long memberId;
-    private Boolean deletedYn;
+    private Long productId;
+    private Long quantity;
+    private Boolean presentSaleYn;
 }
