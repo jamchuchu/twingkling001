@@ -4,7 +4,6 @@ import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
-import com.sparta.twingkling001.member.dto.response.SimpleMemberRespDto;
 import com.sparta.twingkling001.member.service.MemberService;
 import com.sparta.twingkling001.redis.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +56,10 @@ public class MailController {
 
     //토큰 검증 및 인증
     @GetMapping("/verify")
-    public ResponseEntity<ApiResponse<Object>> verifyEmail( @RequestParam String email, String token){
+    public ResponseEntity<ApiResponse<?>> verifyEmail( @RequestParam String email, String token){
         //토큰 일치시 DB 저장
         if(mailService.checkToken(email, token)){
-            SimpleMemberRespDto response = memberService.addMember(redisService.getValues(email, MemberReqDtoByMail.class));
+            Long response = memberService.addMember(redisService.getValues(email, MemberReqDtoByMail.class));
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
