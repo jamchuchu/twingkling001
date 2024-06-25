@@ -2,9 +2,11 @@ package com.sparta.twingkling001.category.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -13,12 +15,17 @@ import lombok.NoArgsConstructor;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private Long id;
-
-    @Column(name = "upper_category_id")
+    private Long categoryId;
     private Long upperCategoryId;
-
-    @Column(name = "category_name")
     private String categoryName;
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public static Category from(String categoryName) {
+        return Category.builder()
+                .categoryName(categoryName)
+                .build();
+    }
 }
