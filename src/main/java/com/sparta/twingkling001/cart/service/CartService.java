@@ -7,8 +7,11 @@ import com.sparta.twingkling001.cart.entity.Cart;
 import com.sparta.twingkling001.cart.entity.CartDetail;
 import com.sparta.twingkling001.cart.repository.CartDetailRepository;
 import com.sparta.twingkling001.cart.repository.CartRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +20,8 @@ import java.util.List;
 public class CartService {
     private final CartRepository cartRepository;
     private final CartDetailRepository cartDetailRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public CartRespDto addEmptyCart(Long memberId) {
         Cart cart = Cart.builder()
@@ -57,18 +62,23 @@ public class CartService {
     }
 
     public void updateProductQuantity(Long cartDetailId, Long quantity) {
-        cartDetailRepository.updateProductQuantity(cartDetailId, quantity);
+        CartDetail cartDetail = entityManager.find(CartDetail.class, cartDetailId);
+        cartDetail.setQuantity(quantity);
     }
 
     public void deleteCartDetail(Long cartDetailId) {
         cartDetailRepository.deleteCartDetailByCartDetailId(cartDetailId);
     }
 
+    @Transactional
     public void updatePresentSaleYn(Long productId, boolean isSale) {
-        if(isSale){
-            cartDetailRepository.updateProductSateTrue(productId);
-            return;
-        }
-            cartDetailRepository.updateProductSateFalse(productId);
+        List<CartDetail> cartDetails = cartDetailRepository.getCartDetailByProductId(productId);
+        cartDetails.forEach(detail->{
+            if(isSale){
+                detail.setPresentSaleYn(true);
+                return;
+            }
+            detail.setPresentSaleYn(false);
+        });
     }
 }
