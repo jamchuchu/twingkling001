@@ -1,7 +1,7 @@
 package com.sparta.twingkling001.config;
 
-import com.sparta.twingkling001.login.securityLogin.Role;
 import com.sparta.twingkling001.login.token.JwtAuthenticationFilter;
+import com.sparta.twingkling001.member.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,29 +31,33 @@ public class SecurityConfig  {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)  throws Exception {
         http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .httpBasic(AbstractHttpConfigurer::disable)
-//                .formLogin((formLogin) -> {
-//                    formLogin
-//                            .loginProcessingUrl("/api/login/success")
-//                            .defaultSuccessUrl("/api/login/success")
-//                            .failureUrl("/api/login/permit/fail");
-//                })
-//                .logout((logoutConfig) -> {
-//                    logoutConfig
-//                            .logoutSuccessUrl("/api/login/permit/logout");
-//                })
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .formLogin((formLogin) -> {
+                    formLogin
+                            .loginProcessingUrl("/api/login/success")
+                            .defaultSuccessUrl("/api/login/success")
+                            .failureUrl("/api/login/permit/fail");
+                })
+                .logout((logoutConfig) -> {
+                    logoutConfig
+                            .logoutSuccessUrl("/api/login/permit/logout");
+                })
+
                 .authorizeHttpRequests((authorizationRequests) ->
                         authorizationRequests
                                 .anyRequest().permitAll()
-//                                .requestMatchers("/", "/login/**", "/api/login/**").permitAll()
-//                                .requestMatchers("/users").hasRole(Role.USER.getAuthority())
+                                .requestMatchers("/", "/login/**", "/api/login/**").permitAll()
+                                .requestMatchers("/users").hasRole(Role.USER.getAuthority())
 //                                .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
-//                                .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
+                                .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
 //                                .anyRequest().authenticated()
-                );
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
