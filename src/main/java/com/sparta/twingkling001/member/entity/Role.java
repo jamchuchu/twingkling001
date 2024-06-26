@@ -1,4 +1,4 @@
-package com.sparta.twingkling001.login.securityLogin;
+package com.sparta.twingkling001.member.entity;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,11 +19,9 @@ public enum Role implements GrantedAuthority {
         return authority;
     }
 
-    public static Role fromRoleId(long roleId) {
-        switch ((int) roleId) {
-            case 1: return USER;
-            case 2: return SELLER;
-            default: return null;
-        }
+    public static <T> Role fromRoleName(String roleName) {
+        if(roleName.equals("USER")) return USER;
+        if(roleName.equals("SELLER")) return SELLER;
+        else return null;
     }
 }
