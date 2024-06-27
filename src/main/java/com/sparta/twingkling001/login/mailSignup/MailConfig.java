@@ -1,4 +1,4 @@
-package com.sparta.twingkling001.config;
+package com.sparta.twingkling001.login.mailSignup;
 
 import lombok.Getter;
 import lombok.Setter;

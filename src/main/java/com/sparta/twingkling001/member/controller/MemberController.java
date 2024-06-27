@@ -22,6 +22,8 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberAddressService memberAddressService;
 
+
+
     //개인 추가 정보 등록 (아이디 생성시 자동 생성)
     @PostMapping("/detail")
     public ResponseEntity<ApiResponse<Long>> addMemberDetail(@RequestBody MemberDetailReqDto reqDto){
@@ -30,6 +32,7 @@ public class MemberController {
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
+
     @GetMapping("/detail/{memberId}")
     public ResponseEntity<ApiResponse<MemberDetailRespDto>> getMemberDetail(@PathVariable long memberId) {
         MemberDetailRespDto response = memberService.getMemberDetail(memberId);

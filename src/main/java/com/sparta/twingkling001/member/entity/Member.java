@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
-public class Member implements UserDetails {
+public class Member{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -35,27 +35,12 @@ public class Member implements UserDetails {
 
     private Boolean deletedYn;
 
-    public Member( String email, Role role) {
-        this.email = email;
-        this.role = role;
+    public static Member from(Role role, String email, String password){
+        return Member.builder()
+                .role(role)
+                .email(email)
+                .password(password)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
-
-    //아이디별 권한 하나씩만 부여
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(role);
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
 }
