@@ -9,6 +9,7 @@ import com.sparta.twingkling001.login.jwt.JwtUtil;
 
 import com.sparta.twingkling001.member.service.MemberService;
 import com.sparta.twingkling001.redis.RedisService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,14 +73,13 @@ public class TestController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<?>> login(HttpSession session,  @RequestParam String email, String password) {
+    public ResponseEntity<ApiResponse<?>> login(HttpServletRequest request, @RequestBody String email, String password) {
 
-        String userAgent = session.getAttribute("userAgent").toString();
+        String userAgent = request.getHeader("User-Agent").toString();
 
         JwtToken jwtToken = jwtService.login(userAgent, email, password);
 
-        session.setAttribute("refreshToken", jwtToken.getRefreshToken());
-        session.setAttribute("accessToken", jwtToken.getAccessToken());
+
         String refreshKey = "email:" + email + ":userAgent:" + userAgent;
         try {
             redisService.setValues(refreshKey, jwtToken.getRefreshToken());

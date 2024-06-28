@@ -32,11 +32,26 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
     private final RedisService redisService;
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, jwtService, userDetailsService, redisService);
     }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtService);
+        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        return filter;
+    }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)  throws Exception {
@@ -60,7 +75,8 @@ public class SecurityConfig {
 
                 );
         // 필터 관리
-                http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
