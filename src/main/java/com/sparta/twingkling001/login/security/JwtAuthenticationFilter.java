@@ -1,16 +1,13 @@
 package com.sparta.twingkling001.login.security;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twingkling001.login.LoginReqDto;
+import com.sparta.twingkling001.login.jwt.Constant;
 import com.sparta.twingkling001.login.jwt.JwtService;
 import com.sparta.twingkling001.login.jwt.JwtToken;
-import com.sparta.twingkling001.login.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,17 +15,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final JwtService jwtService;
 
     public JwtAuthenticationFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-//        setFilterProcessesUrl("/api/v1/user/login");
     }
 
     @Override
@@ -56,11 +50,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        JwtToken token = jwtService.createTokens(request.getHeader(Constant.USER_AGENT), username);
 
-        JwtToken token = jwtService.createTokens(request.getHeader("User-Agent"), username);
-
-        request.setAttribute("refreshToken", token.getRefreshToken());
-        request.setAttribute(AUTHORIZATION_HEADER, token.getAccessToken());
+        // 응답 헤더에 토큰 추가
+        response.addHeader(Constant.AUTHORIZATION_HEADER, Constant.BEARER_PREFIX  + token.getAccessToken());
+        response.addHeader(Constant.REFRESH_TOKEN, token.getRefreshToken());
     }
 
     @Override

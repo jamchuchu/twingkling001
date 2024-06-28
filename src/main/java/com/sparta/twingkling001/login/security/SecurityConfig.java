@@ -1,7 +1,6 @@
 package com.sparta.twingkling001.login.security;
 
 import com.sparta.twingkling001.login.jwt.JwtService;
-import com.sparta.twingkling001.login.jwt.JwtUtil;
 import com.sparta.twingkling001.member.entity.Role;
 
 import com.sparta.twingkling001.redis.RedisService;
@@ -9,8 +8,11 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,15 +25,14 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
+
 public class SecurityConfig {
-    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
-    private final RedisService redisService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
 
@@ -42,7 +43,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, jwtService, userDetailsService, redisService);
+        return new JwtAuthorizationFilter( jwtService, userDetailsService);
     }
 
     @Bean
@@ -65,8 +66,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizationRequests) ->
                                 authorizationRequests
 //                                .anyRequest().permitAll()
-                                        .requestMatchers("/", "/login/**", "/api/login/**").permitAll()
-//                                        .requestMatchers("/users").hasRole(Role.USER.getAuthority())
+                                        .requestMatchers("/api/login").permitAll()
+//                                        .requestMatchers("/logout").permitAll()
+//                                        .requestMatchers( "/test").permitAll()
+//                                        .requestMatchers("/test").hasRole(Role.USER.getAuthority())
 //                                        .requestMatchers("*/users").hasRole(Role.USER.getAuthority())
 //                                .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
                                         .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
