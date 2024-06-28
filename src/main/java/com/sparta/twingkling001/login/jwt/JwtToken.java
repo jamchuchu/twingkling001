@@ -12,4 +12,11 @@ import lombok.NoArgsConstructor;
 public class JwtToken {
     private String accessToken;
     private String refreshToken;
+
+    public static JwtToken from(String accessToken, String refreshToken) {
+        return JwtToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }

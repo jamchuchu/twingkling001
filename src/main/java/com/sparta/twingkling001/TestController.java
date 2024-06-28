@@ -13,10 +13,14 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
+import java.util.Date;
 
 @Slf4j
 @Controller
@@ -26,6 +30,9 @@ public class TestController {
     private final RedisService redisService;
     private final JwtService jwtService;
 
+    // 토큰 만료시간
+    @Value("${jwt.expiration}")
+    private long TOKEN_TIME;
 
     @GetMapping("/redisTest")
     @ResponseBody
@@ -63,13 +70,25 @@ public class TestController {
 //        return jwtToken;
 //    }
 
+
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<?>> login(@RequestParam String email, String password) {
-        String response = jwtService.login(email, password);
-        System.out.println(response);
+    public ResponseEntity<ApiResponse<?>> login(HttpSession session,  @RequestParam String email, String password) {
+
+        String userAgent = session.getAttribute("userAgent").toString();
+
+        JwtToken jwtToken = jwtService.login(userAgent, email, password);
+
+        session.setAttribute("refreshToken", jwtToken.getRefreshToken());
+        session.setAttribute("accessToken", jwtToken.getAccessToken());
+        String refreshKey = "email:" + email + ":userAgent:" + userAgent;
+        try {
+            redisService.setValues(refreshKey, jwtToken.getRefreshToken());
+        }catch (Exception e) {
+            throw new IllegalStateException("refresh 토큰 삽입 실패");
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS, jwtToken));
     }
 
 

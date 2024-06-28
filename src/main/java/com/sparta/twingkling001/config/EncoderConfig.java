@@ -1,7 +1,5 @@
 package com.sparta.twingkling001.config;
 
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
@@ -9,17 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.security.Key;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class JasyptConfig {
+public class EncoderConfig {
     @Value("${jwt.secret}")
     private final String key;
 
     @Autowired
-    public JasyptConfig( @Value("${jwt.secret}") String secretKey) {
+    public EncoderConfig(@Value("${jwt.secret}") String secretKey) {
         this.key = secretKey;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean("jasyptStringEncryptor")
