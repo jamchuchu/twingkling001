@@ -22,6 +22,8 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
+
+
     public void setValues(String key, Object data) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(data);
         ValueOperations<String, Object> values = redisTemplate.opsForValue();

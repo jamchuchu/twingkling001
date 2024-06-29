@@ -1,11 +1,10 @@
 package com.sparta.twingkling001.member.entity;
 
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
+import com.sparta.twingkling001.member.repository.MemberRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -15,42 +14,54 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member_detail")
-
 public class MemberDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_detail_id")
-    private Long memberDetailId;
-
-    @Column(name = "member_id")
-    private Long memberId;
-
-    @Column(name = "name")
+    private long memberDetailId;
+    private long memberId;
     private String name;
-
-    @Column(name = "nickname")
     private String nickname;
-
-    @Column(name = "phone_number")
     private String phoneNumber;
-
-    @Column(name = "age")
     private String age;
-
-    @Column(name = "gender")
     private String gender;
-
-    @Column(name = "birth")
     private LocalDate birth;
 
-     public MemberDetail(MemberDetailReqDto reqDto){
-         this.memberId = reqDto.getMemberId();
-         this.age = reqDto.getAge();
-         this.birth = reqDto.getBirth();
-         this.gender = reqDto.getGender();
-         this.name = reqDto.getName();
-         this.nickname = reqDto.getNickname();
-         this.phoneNumber = reqDto.getPhoneNumber();
-     }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setBirth(LocalDate birth) {
+        this.birth = birth;
+    }
+
+    public static MemberDetail from(MemberDetailReqDto reqDto){
+        return MemberDetail.builder()
+                .memberDetailId(reqDto.getMemberDetailId())
+                .memberId(reqDto.getMemberId())
+                .name(reqDto.getName())
+                .nickname(reqDto.getNickname())
+                .phoneNumber(reqDto.getPhoneNumber())
+                .age(reqDto.getAge())
+                .gender(reqDto.getGender())
+                .birth(reqDto.getBirth())
+                .build();
+    }
+
 }
 

@@ -9,6 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 public class MemberDetailReqDto {
+    private Long memberDetailId;
     private Long memberId;
     private String age;
     private LocalDate birth;
@@ -16,4 +17,5 @@ public class MemberDetailReqDto {
     private String name;
     private String nickname;
     private String phoneNumber;
+
 }

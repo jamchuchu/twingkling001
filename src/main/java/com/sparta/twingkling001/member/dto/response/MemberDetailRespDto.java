@@ -21,6 +21,19 @@ public class MemberDetailRespDto {
     private String name;
     private String nickname;
     private String phoneNumber;
+
+    public static MemberDetailRespDto from(MemberDetail memberDetail){
+        return  MemberDetailRespDto.builder()
+                .memberDetailId(memberDetail.getMemberDetailId())
+                .memberId(memberDetail.getMemberId())
+                .age(memberDetail.getAge())
+                .birth(memberDetail.getBirth())
+                .gender(memberDetail.getGender())
+                .name(memberDetail.getName())
+                .nickname(memberDetail.getNickname())
+                .phoneNumber(memberDetail.getPhoneNumber())
+                .build();
+    }
 }
 
 

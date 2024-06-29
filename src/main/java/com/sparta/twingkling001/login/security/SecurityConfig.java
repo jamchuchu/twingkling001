@@ -65,8 +65,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((authorizationRequests) ->
                                 authorizationRequests
-//                                .anyRequest().permitAll()
-                                        .requestMatchers("/api/login").permitAll()
+                                .anyRequest().permitAll()
+//                                        .requestMatchers("/api/login").permitAll()
 //                                        .requestMatchers("/logout").permitAll()
 //                                        .requestMatchers( "/test").permitAll()
 //                                        .requestMatchers("/test").hasRole(Role.USER.getAuthority())
@@ -78,8 +78,8 @@ public class SecurityConfig {
 
                 );
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
