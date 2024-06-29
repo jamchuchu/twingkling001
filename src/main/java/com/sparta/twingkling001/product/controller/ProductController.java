@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     //물건 정보 디테일까지 들고오기
-    @GetMapping("/{productId}")
+    @GetMapping("/id/{productId}")
     public ResponseEntity<ApiResponse<ProductRespDto>> getProductByProductId(@PathVariable Long productId) {
         ProductRespDto response = productService.getProductByProductId(productId);
         return ResponseEntity
@@ -42,7 +42,7 @@ public class ProductController {
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
     //물건 이름으로 들고오기
-    @GetMapping("")
+    @GetMapping("/name")
     public ResponseEntity<ApiResponse<List<ProductRespDto>>> getProductByProductName(@RequestParam String productName) {
         List<ProductRespDto> response = productService.getProductByProductName(productName);
         return ResponseEntity
@@ -51,7 +51,7 @@ public class ProductController {
     }
 
     //판매자별 판매 물건 들고오기
-    @GetMapping("/{memberId}")
+    @GetMapping("/member/{memberId}")
     public ResponseEntity<ApiResponse<List<ProductRespDto>>> getProductByMemberId(@PathVariable Long memberId) {
         List<ProductRespDto> response = productService.getProductsByMemberId(memberId);
         return ResponseEntity
