@@ -58,6 +58,7 @@ public class MemberService {
         return MemberRespDto.from(member);
     }
 
+    @Transactional
     public void updateMemberPassword(Long memberId, String password){
         Member member = entityManager.find(Member.class, memberId);
         member.setPassword(passwordEncoder.encode(password));
@@ -99,6 +100,7 @@ public class MemberService {
         return MemberDetailRespDto.from(memberDetail);
     }
     //수정
+    @Transactional
     public void updateMemberDetail(MemberDetailReqDto reqDto) {
         MemberDetail memberDetail = entityManager.find(MemberDetail.class, reqDto.getMemberDetailId());
         memberDetail.setName(reqDto.getName());

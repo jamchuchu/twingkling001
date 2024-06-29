@@ -18,5 +18,5 @@ public interface MemberAddressRepository extends JpaRepository<MemberAddress, Lo
     List<MemberAddress> findMemberAddressesByMemberId(Long memberId);
     List<MemberAddress> findMemberAddressesByMemberIdAndIsPrimaryIsFalse(Long memberId);
     MemberAddress findByMemberIdAndIsPrimary(Long memberId, boolean isPrimary);
-    void deleteMemberAddressByAddressId(Long memberAddressId);
+    void deleteMemberAddressByMemberAddressId(Long memberAddressId);
 }
