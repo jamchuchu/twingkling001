@@ -1,5 +1,7 @@
 package com.sparta.twingkling001.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.twingkling001.config.LocalDateTimeAttributeConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,14 +28,18 @@ public class Member{
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
     private String email;
-
     private String password;
-
     private LocalDateTime createdAt;
-
     private Boolean deletedYn;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDeletedYn(Boolean deletedYn) {
+        this.deletedYn = deletedYn;
+    }
 
     public static Member from(Role role, String email, String password){
         return Member.builder()
