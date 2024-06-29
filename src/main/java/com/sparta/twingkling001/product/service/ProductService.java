@@ -14,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -96,12 +97,28 @@ public class ProductService {
         return details.stream().map(ProductDetailRespDto::from).toList();
     }
 
+    @Transactional
     public void updateProductDetails(ProductDetailReqDto reqDto) {
         ProductDetail detail = entityManager.find(ProductDetail.class, reqDto.getProductDetailId());
         detail.setDetailTypeName(reqDto.getDetailTypeName());
         detail.setSaleQuantity(reqDto.getSaleQuantity());
         detail.setDetailPrice(reqDto.getDetailPrice());
         detail.setSaleState(reqDto.getSaleState());
+    }
+
+
+    public void plusProductQuantity(Long ProductDetailId){
+        ProductDetail detail = entityManager.find(ProductDetail.class, ProductDetailId);
+        detail.setSaleQuantity(detail.getSaleQuantity()+1);
+    }
+
+    public void minusProductQuantity(Long ProductDetailId){
+        ProductDetail detail = entityManager.find(ProductDetail.class, ProductDetailId);
+        if(detail.getSaleQuantity() > 0) {
+            detail.setSaleQuantity(detail.getSaleQuantity() - 1);
+        }else{
+            throw new IllegalArgumentException("재고가 없습니다");
+        }
     }
 
     public void deleteProductDetails(Long productId) {

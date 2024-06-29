@@ -11,19 +11,28 @@ import com.sparta.twingkling001.order.entity.Order;
 import com.sparta.twingkling001.order.entity.OrderDetail;
 import com.sparta.twingkling001.order.repository.OrderDetailRepository;
 import com.sparta.twingkling001.order.repository.OrderRepository;
+import com.sparta.twingkling001.product.repository.ProductDetailRepository;
+import com.sparta.twingkling001.product.repository.ProductRepository;
+import com.sparta.twingkling001.product.service.ProductService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    private final ProductService productService;
+
     private final OrderRepository  orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final ProductDetailRepository productDetailRepository;
     private final EntityManager entityManager;
 
 
@@ -32,13 +41,16 @@ public class OrderService {
         return OrderRespDto.from(orderRepository.save(order));
     }
 
-    public List<OrderDetailRespDto> addOrderDetail(Long orderId, List<OrderDetailReqDto> reqDto) {
+    @Transactional
+    public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) {
         Order order = entityManager.find(Order.class, orderId);
-        return reqDto.stream().map(
-                detailReqDto -> OrderDetail.from(order, detailReqDto))
-                .map(orderDetailRepository::save)
-                .map(OrderDetailRespDto::from)
-                .toList();
+        if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductId()).getSaleQuantity() == 0){
+            throw new IllegalArgumentException("남은 판매 수량이 없습니다");
+        }
+        OrderDetail detail = orderDetailRepository.save(OrderDetail.from(order, reqDto));
+        productService.minusProductQuantity(detail.getProductId());
+
+        return OrderDetailRespDto.from(detail);
     }
 
     public OrderRespDto getOrder(Long orderId) {
@@ -78,12 +90,14 @@ public class OrderService {
     public void updatePaymentDate(Long orderId, LocalDateTime date) {
         Order order = entityManager.find(Order.class, orderId);
         order.setPaymentDate(date);
+        order.setOrderState(OrderState.ORDER_COMPLETED);
     }
 
     @Transactional
     public void updateDeliverDate(Long orderId, LocalDateTime date) {
         Order order = entityManager.find(Order.class, orderId);
         order.setDeliverDate(date);
+        order.setOrderState(OrderState.DELIVERY_COMPLETED);
     }
 
     @Transactional
@@ -96,13 +110,34 @@ public class OrderService {
     @Transactional
     public void deleteOrder(Long orderId) {
         Order order = entityManager.find(Order.class, orderId);
-        order.setDeletedYn(true);
+        if(order.getOrderState().equals(OrderState.ORDER_COMPLETED) || order.getOrderState().equals(OrderState.PREPARING_FOR_SHIPMENT)) {
+            order.setDeletedYn(true);
+            order.setOrderState(OrderState.CANSEL);
+        }
     }
 
     @Transactional
     public void deleteOrderDetailByOrderId(Long orderId) {
         List<OrderDetail> details = orderDetailRepository.findOrderDetailsByOrder_OrderIdAndDeletedYnFalse(orderId);
-        details.forEach(detail -> detail.setDeletedYn(true));
+        details.forEach(detail -> {
+            productService.plusProductQuantity(detail.getProductId());
+            detail.setDeletedYn(true);
+        });
+    }
+
+    @Transactional
+    public void refundOrder(Long orderId){
+        Order order = entityManager.find(Order.class, orderId);
+        Duration duration = Duration.between(order.getDeliverDate(), LocalDateTime.now());
+        if (duration.toHours() >= 24) {
+            throw new RuntimeException("반품 가능 기간이 지났습니다");
+        }
+        if(order.getOrderState().equals(OrderState.DELIVERY_COMPLETED)){
+            order.setDeletedYn(true);
+            order.setOrderState(OrderState.CANSEL);
+            return;
+        }
+        throw new RuntimeException("반품 가능 상태가 아닙니다.");
     }
 
 

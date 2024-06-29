@@ -26,7 +26,6 @@ public class OrderDetail {
     private Boolean deletedYn;
     private Long price;
 
-
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }

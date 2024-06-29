@@ -58,6 +58,10 @@ public class Order {
         this.deletedYn = deletedYn;
     }
 
+    public void setOrderState(OrderState orderState) {
+        this.orderState = orderState;
+    }
+
     public static Order from(OrderReqDto reqDto){
         return Order.builder()
                 .orderId(reqDto.getOrderId())

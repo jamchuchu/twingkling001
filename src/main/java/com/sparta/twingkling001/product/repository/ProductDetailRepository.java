@@ -14,6 +14,7 @@ import java.util.List;
 
 @Repository
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Long> {
+    ProductDetail findProductDetailByProductDetailId(Long productDetailId);
     List<ProductDetail> findProductDetailsByProductId(Long productId);
     List<ProductDetail> findProductDetailsByProductIdAndDetailType(long productId, DetailType detailType);
     void deleteAllByProductId(Long productId);
