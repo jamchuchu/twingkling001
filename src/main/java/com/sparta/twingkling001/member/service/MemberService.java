@@ -31,7 +31,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
     private final PasswordEncoder passwordEncoder;
-
     private final EntityManager entityManager;
 
     public long addMember(MemberReqDtoByMail memberReqDtoByMail) {
