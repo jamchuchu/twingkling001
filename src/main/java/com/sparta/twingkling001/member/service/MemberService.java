@@ -29,9 +29,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
 
-
-
-
     public long addMember(MemberReqDtoByMail memberReqDtoByMail) {
         Member member = Member.builder()
                 .role(Role.USER)

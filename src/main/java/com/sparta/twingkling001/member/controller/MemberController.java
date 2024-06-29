@@ -23,7 +23,6 @@ public class MemberController {
     private final MemberAddressService memberAddressService;
 
 
-
     //개인 추가 정보 등록 (아이디 생성시 자동 생성)
     @PostMapping("/detail")
     public ResponseEntity<ApiResponse<Long>> addMemberDetail(@RequestBody MemberDetailReqDto reqDto){
@@ -90,14 +89,6 @@ public class MemberController {
     @PutMapping("/address/{memberAddressId}")
     public ResponseEntity<ApiResponse<?>> updateMemberAddress(@PathVariable Long memberAddressId,  MemberAddressReqDto reqDto) {
         memberAddressService.updateMemberAddress(memberAddressId, reqDto);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
-    }
-    //서브 -> 메인으로 변경
-    @PatchMapping("/address/{memberId}/{memberAddressId}")
-    public ResponseEntity<ApiResponse<?>> updateMemberAddressLevel(@PathVariable Long memberId, Long memberAddressId) {
-        memberAddressService.updateMemberAddressLevel(memberId, memberAddressId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS));

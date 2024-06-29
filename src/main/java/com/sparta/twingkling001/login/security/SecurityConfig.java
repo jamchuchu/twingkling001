@@ -72,8 +72,8 @@ public class SecurityConfig {
 //                                        .requestMatchers("/test").hasRole(Role.USER.getAuthority())
 //                                        .requestMatchers("*/users").hasRole(Role.USER.getAuthority())
 //                                .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
-                                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
-                                        .anyRequest().authenticated()
+//                                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
+//                                        .anyRequest().authenticated()
 
 
                 );

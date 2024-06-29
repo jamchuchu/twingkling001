@@ -4,6 +4,8 @@ import com.sparta.twingkling001.member.dto.request.MemberAddressReqDto;
 import com.sparta.twingkling001.member.dto.response.MemberAddressRespDto;
 import com.sparta.twingkling001.member.entity.MemberAddress;
 import com.sparta.twingkling001.member.repository.MemberAddressRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +15,15 @@ import java.util.List;
 @Service
 public class MemberAddressService {
     private final MemberAddressRepository memberAddressRepository;
+    private final EntityManager entityManager;
+
 
     public Long addMemberAddress(MemberAddressReqDto reqDto) {
-        MemberAddress memberAddress = MemberAddress.builder()
-                .memberId(reqDto.getMemberId())
-                .addressId(reqDto.getAddressId())
-                .isPrimary(reqDto.isPrimary())
-                .build();
+        MemberAddress memberAddress = entityManager.find(MemberAddress.class, reqDto.getMemberAddressId());
         if(reqDto.isPrimary()) {
             MemberAddress mainAddress = memberAddressRepository.findByMemberIdAndIsPrimary(reqDto.getMemberId(), true);
             if(mainAddress != null){
-                memberAddressRepository.updateMainToSubByMemberId(reqDto.getMemberId());
+                memberAddress.setPrimary(false);
                 deleteMemberSubAddressMoreThanCount(reqDto.getMemberId());
             }
         }
@@ -34,21 +34,14 @@ public class MemberAddressService {
     }
 
     public List<MemberAddressRespDto> getMemberAddresses(Long memberId){
-        return memberAddressRepository.getMemberAddressesByMemberId(memberId);
+        return memberAddressRepository.findMemberAddressesByMemberId(memberId).stream()
+                .map(MemberAddressRespDto::from).toList();
     }
 
     public void updateMemberAddress(Long memberAddressId, MemberAddressReqDto reqDto) {
-        memberAddressRepository.updateMemberAddress(memberAddressId, reqDto);
-    }
-
-    // 메인이 있으면 서브로 내리고 원하는 것 메인 추가
-    public void updateMemberAddressLevel(Long memberId, Long memberAddressId) {
-        MemberAddress mainAddress = memberAddressRepository.findByMemberIdAndIsPrimary(memberId, true);
-        if(mainAddress != null){
-            memberAddressRepository.updateMainToSubByMemberId(memberId);
-            deleteMemberSubAddressMoreThanCount(memberId);
-        }
-        memberAddressRepository.updatePrimaryByMemberAddressId(memberAddressId);
+        MemberAddress memberAddress = entityManager.find(MemberAddress.class, memberAddressId);
+        memberAddress.setPrimary(reqDto.isPrimary());
+        memberAddress.setUsedAt(reqDto.getUsedAt());
     }
 
     public void deleteMemberAddress(Long memberAddressId){
@@ -57,7 +50,7 @@ public class MemberAddressService {
 
     //5개 이상이면 삭제
     public void deleteMemberSubAddressMoreThanCount(Long memberId) {
-        List<MemberAddress> subAddresses = memberAddressRepository.getMemberSubAddresses(memberId);
+        List<MemberAddress> subAddresses = memberAddressRepository.findMemberAddressesByMemberIdAndIsPrimaryIsFalse(memberId);
         if(subAddresses.size() == 5) {
             Long oldestMemberAddressId = subAddresses.get(0).getMemberAddressId();
             memberAddressRepository.deleteMemberAddressByAddressId(oldestMemberAddressId);

@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.member.entity;
 
+import com.sparta.twingkling001.member.dto.request.MemberAddressReqDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,18 +19,27 @@ import java.time.LocalDateTime;
 public class MemberAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_address_id")
     private Long memberAddressId;
-
-    @Column(name = "address_id")
     private Long addressId;
-
-    @Column(name = "member_id")
     private Long memberId;
-
-    @Column(name = "is_primary")
     private Boolean isPrimary;
-
-    @Column(name = "used_at")
     private LocalDateTime usedAt;
+
+    public void setUsedAt(LocalDateTime usedAt) {
+        this.usedAt = usedAt;
+    }
+
+    public void setPrimary(Boolean primary) {
+        isPrimary = primary;
+    }
+
+    public static MemberAddress from(MemberAddressReqDto reqDto){
+        return MemberAddress.builder()
+                .memberAddressId(reqDto.getMemberAddressId())
+                .addressId(reqDto.getAddressId())
+                .memberId(reqDto.getMemberId())
+                .isPrimary(reqDto.isPrimary())
+                .usedAt(reqDto.getUsedAt())
+                .build();
+    }
 }

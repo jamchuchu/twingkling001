@@ -1,11 +1,15 @@
 package com.sparta.twingkling001.member.dto.response;
 
 import com.sparta.twingkling001.member.entity.MemberAddress;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class MemberAddressRespDto {
@@ -15,11 +19,14 @@ public class MemberAddressRespDto {
     private boolean isPrimary;
     private LocalDateTime UsedAt;
 
-    public MemberAddressRespDto(MemberAddress memberAddress) {
-        this.memberAddressId = memberAddress.getMemberAddressId();
-        this.memberId = memberAddress.getMemberId();
-        this.AddressId = memberAddress.getAddressId();
-        this.isPrimary = memberAddress.getIsPrimary();
-        this.UsedAt = memberAddress.getUsedAt();
+    public static MemberAddressRespDto from(MemberAddress memberAddress) {
+        return MemberAddressRespDto.builder()
+                .memberAddressId(memberAddress.getMemberAddressId())
+                .memberId(memberAddress.getMemberId())
+                .AddressId(memberAddress.getAddressId())
+                .isPrimary(memberAddress.getIsPrimary())
+                .UsedAt(memberAddress.getUsedAt())
+                .build();
+
     }
 }
