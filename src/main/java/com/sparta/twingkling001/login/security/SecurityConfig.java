@@ -65,21 +65,21 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((authorizationRequests) ->
                                 authorizationRequests
-//                                .anyRequest().permitAll()
-                                        .requestMatchers("/api/login").permitAll()
+                                .anyRequest().permitAll()
+//                                        .requestMatchers("/api/login").permitAll()
 //                                        .requestMatchers("/logout").permitAll()
 //                                        .requestMatchers( "/test").permitAll()
 //                                        .requestMatchers("/test").hasRole(Role.USER.getAuthority())
 //                                        .requestMatchers("*/users").hasRole(Role.USER.getAuthority())
 //                                .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
-                                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
-                                        .anyRequest().authenticated()
+//                                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
+//                                        .anyRequest().authenticated()
 
 
                 );
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

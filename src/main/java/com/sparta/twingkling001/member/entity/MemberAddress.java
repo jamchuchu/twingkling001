@@ -20,16 +20,8 @@ public class MemberAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_address_id")
     private Long memberAddressId;
-
-    @Column(name = "address_id")
     private Long addressId;
-
-    @Column(name = "member_id")
     private Long memberId;
-
-    @Column(name = "is_primary")
     private Boolean isPrimary;
-
-    @Column(name = "used_at")
     private LocalDateTime usedAt;
 }

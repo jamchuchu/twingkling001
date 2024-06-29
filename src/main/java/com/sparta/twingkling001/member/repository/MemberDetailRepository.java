@@ -14,8 +14,7 @@ public interface MemberDetailRepository extends JpaRepository<MemberDetail, Long
 
     @Modifying
     @Transactional
-    @Query("UPDATE MemberDetail md SET md.age = :#{#memberDetail.age}, md.birth = :#{#memberDetail.birth}, md.gender = :#{#memberDetail.gender}, md.name = :#{#memberDetail.name}, md.nickname = :#{#memberDetail.nickname}, md.phoneNumber = :#{#memberDetail.phoneNumber} WHERE md.memberId = :#{#memberDetail.memberId}")
-    void updateMemberDetail(@Param("memberDetail") MemberDetail memberDetail);
+
 
     void deleteMemberDetailByMemberIdEquals(Long memberId);
 
