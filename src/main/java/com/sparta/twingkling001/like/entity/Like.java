@@ -2,9 +2,11 @@ package com.sparta.twingkling001.like.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -14,15 +16,20 @@ import lombok.NoArgsConstructor;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
-    private Long id;
-
-    @Column(name = "product_id")
+    private Long likeId;
     private Long productId;
-
-    @Column(name = "member_id")
     private Long memberId;
-
-    @Column(name = "deleted_yn")
     private Boolean deletedYn;
+
+    public static Like from(Long productId, Long memberId){
+        return Like.builder()
+                .productId(productId)
+                .memberId(memberId)
+                .deletedYn(false)
+                .build();
+    }
+
+    public void setDeletedYn(Boolean deletedYn) {
+        this.deletedYn = deletedYn;
+    }
 }
