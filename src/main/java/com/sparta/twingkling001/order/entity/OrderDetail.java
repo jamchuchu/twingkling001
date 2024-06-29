@@ -1,11 +1,14 @@
 package com.sparta.twingkling001.order.entity;
 
+import com.sparta.twingkling001.order.dto.request.OrderDetailReqDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -14,22 +17,35 @@ import lombok.NoArgsConstructor;
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_detail_id")
-    private Long id;
-
-    @Column(name = "order_id")
-    private Long orderId;
-
-    @Column(name = "product_id")
+    private Long orderDetailId;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
     private Long productId;
-
-    @Column(name = "quantity")
     private Long quantity;
-
-    @Column(name = "deleted_yn")
     private Boolean deletedYn;
-
-    @Column(name = "price")
     private Long price;
 
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public void setDeletedYn(Boolean deletedYn) {
+        this.deletedYn = deletedYn;
+    }
+
+    public static OrderDetail from(Order order, OrderDetailReqDto reqDto){
+        return OrderDetail.builder()
+                .order(order)
+                .productId(reqDto.getProductId())
+                .quantity(reqDto.getQuantity())
+                .deletedYn(reqDto.getDeletedYn())
+                .price(reqDto.getPrice())
+                .build();
+    }
 }
