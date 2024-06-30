@@ -12,7 +12,6 @@ import com.sparta.twingkling001.order.entity.OrderDetail;
 import com.sparta.twingkling001.order.repository.OrderDetailRepository;
 import com.sparta.twingkling001.order.repository.OrderRepository;
 import com.sparta.twingkling001.product.repository.ProductDetailRepository;
-import com.sparta.twingkling001.product.repository.ProductRepository;
 import com.sparta.twingkling001.product.service.ProductService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +43,11 @@ public class OrderService {
     @Transactional
     public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) {
         Order order = entityManager.find(Order.class, orderId);
-        if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductId()).getSaleQuantity() == 0){
+        if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductDetailId()).getSaleQuantity() == 0){
             throw new IllegalArgumentException("남은 판매 수량이 없습니다");
         }
         OrderDetail detail = orderDetailRepository.save(OrderDetail.from(order, reqDto));
-        productService.minusProductQuantity(detail.getProductId());
+        productService.minusProductQuantity(detail.getProductDetailId());
 
         return OrderDetailRespDto.from(detail);
     }
@@ -120,7 +119,7 @@ public class OrderService {
     public void deleteOrderDetailByOrderId(Long orderId) {
         List<OrderDetail> details = orderDetailRepository.findOrderDetailsByOrder_OrderIdAndDeletedYnFalse(orderId);
         details.forEach(detail -> {
-            productService.plusProductQuantity(detail.getProductId());
+            productService.plusProductQuantity(detail.getProductDetailId());
             detail.setDeletedYn(true);
         });
     }

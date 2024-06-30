@@ -21,7 +21,7 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    private Long productId;
+    private Long productDetailId;
     private Long quantity;
     private Boolean deletedYn;
     private Long price;
@@ -41,7 +41,7 @@ public class OrderDetail {
     public static OrderDetail from(Order order, OrderDetailReqDto reqDto){
         return OrderDetail.builder()
                 .order(order)
-                .productId(reqDto.getProductId())
+                .productDetailId(reqDto.getProductDetailId())
                 .quantity(reqDto.getQuantity())
                 .deletedYn(reqDto.getDeletedYn())
                 .price(reqDto.getPrice())

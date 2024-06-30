@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class OrderDetailRespDto {
     private Long orderDetailId;
     private Order order;
-    private Long productId;
+    private Long productDetailId;
     private Long quantity;
     private Boolean deletedYn;
     private Long price;
@@ -23,7 +23,7 @@ public class OrderDetailRespDto {
         return OrderDetailRespDto.builder()
                 .orderDetailId(orderDetail.getOrderDetailId())
                 .order(orderDetail.getOrder())
-                .productId(orderDetail.getProductId())
+                .productDetailId(orderDetail.getProductDetailId())
                 .quantity(orderDetail.getQuantity())
                 .deletedYn(orderDetail.getDeletedYn())
                 .price(orderDetail.getPrice())

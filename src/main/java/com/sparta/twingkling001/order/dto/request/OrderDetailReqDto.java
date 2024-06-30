@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class OrderDetailReqDto {
     private Long orderDetailId;
     private Order order;
-    private Long productId;
+    private Long productDetailId;
     private Long quantity;
     private Boolean deletedYn;
     private Long price;
