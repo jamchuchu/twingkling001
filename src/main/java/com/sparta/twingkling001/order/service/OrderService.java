@@ -43,6 +43,9 @@ public class OrderService {
     @Transactional
     public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) {
         Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
         if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductDetailId()).getSaleQuantity() == 0){
             throw new IllegalArgumentException("남은 판매 수량이 없습니다");
         }
@@ -80,28 +83,49 @@ public class OrderService {
     @Transactional
     public void updateOrderReceiveInfo(Long orderId, OrderReceiveReqDto orderReceiveReqDto) {
         Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
         order.setReceiveName(orderReceiveReqDto.getReceiveName());
         order.setReceivePhoneNumber(orderReceiveReqDto.getReceivePhoneNumber());
         order.setReceiveAddressId(orderReceiveReqDto.getReceiveAddressId());
     }
 
     @Transactional
-    public void updatePaymentDate(Long orderId, LocalDateTime date) {
+    public void updateOrderStateToShipped(Long orderId){
         Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
+        order.setOrderState(OrderState.SHIPPED);
+    }
+
+    @Transactional
+    public void updatePaymentDateAndState(Long orderId, LocalDateTime date) {
+        Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
         order.setPaymentDate(date);
         order.setOrderState(OrderState.ORDER_COMPLETED);
     }
 
+
     @Transactional
-    public void updateDeliverDate(Long orderId, LocalDateTime date) {
+    public void updateDeliverDateAndState(Long orderId, LocalDateTime date) {
         Order order = entityManager.find(Order.class, orderId);
         order.setDeliverDate(date);
         order.setOrderState(OrderState.DELIVERY_COMPLETED);
     }
 
+
+
     @Transactional
     public void updateOrderDetailQuantity(Long orderDetailId, OrderQuantityReqDto reqDto) {
         OrderDetail orderDetail = entityManager.find(OrderDetail.class, orderDetailId);
+        if(orderDetail == null){
+            throw new IllegalStateException("Order not found");
+        }
         orderDetail.setQuantity(reqDto.getQuantity());
         orderDetail.setPrice(reqDto.getPrice());
     }
@@ -109,6 +133,9 @@ public class OrderService {
     @Transactional
     public void deleteOrder(Long orderId) {
         Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
         if(order.getOrderState().equals(OrderState.ORDER_COMPLETED) || order.getOrderState().equals(OrderState.PREPARING_FOR_SHIPMENT)) {
             order.setDeletedYn(true);
             order.setOrderState(OrderState.CANSEL);
@@ -127,6 +154,9 @@ public class OrderService {
     @Transactional
     public void refundOrder(Long orderId){
         Order order = entityManager.find(Order.class, orderId);
+        if(order == null){
+            throw new IllegalStateException("Order not found");
+        }
         Duration duration = Duration.between(order.getDeliverDate(), LocalDateTime.now());
         if (duration.toHours() >= 24) {
             throw new RuntimeException("반품 가능 기간이 지났습니다");

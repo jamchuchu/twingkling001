@@ -3,6 +3,7 @@ package com.sparta.twingkling001.order.controller;
 import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
+import com.sparta.twingkling001.order.constant.OrderConstants;
 import com.sparta.twingkling001.order.constant.OrderState;
 import com.sparta.twingkling001.order.dto.request.OrderDetailReqDto;
 import com.sparta.twingkling001.order.dto.request.OrderQuantityReqDto;
@@ -13,7 +14,7 @@ import com.sparta.twingkling001.order.dto.response.OrderRespDto;
 import com.sparta.twingkling001.order.entity.Order;
 import com.sparta.twingkling001.order.service.OrderService;
 import com.sparta.twingkling001.product.service.ProductService;
-import jakarta.persistence.EntityManager;
+import com.sparta.twingkling001.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ import java.util.List;
 @RestController
 public class OrderController {
     private final OrderService orderService;
-    private final EntityManager entityManager;
+    private final RedisService redisService;
 
     // 주문 작성 (주문 디테일 까지 다 받아서 작성)
     @Transactional
@@ -111,10 +112,11 @@ public class OrderController {
                 .body(ApiResponse.success(SuccessType.SUCCESS));
     }
 
-    //결제 시간 수정
+    //결제: 각 결제 완료  orderId(redis in)
     @PatchMapping("/{orderId}/payment_date")
     public ResponseEntity<ApiResponse<?>> updatePaymentDate(@PathVariable Long orderId, @RequestBody LocalDateTime date){
-        orderService.updatePaymentDate(orderId, date);
+        orderService.updatePaymentDateAndState(orderId, date);
+        redisService.addSetValue(OrderConstants.AWAIT_SHIP, orderId.toString());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS));
@@ -129,15 +131,15 @@ public class OrderController {
                 .body(ApiResponse.success(SuccessType.SUCCESS));
     }
 
-
-    //배송 완료 시간 수정
-    @PatchMapping("/{orderId}/deliverDate")
-    public ResponseEntity<ApiResponse<?>> updateDeliverDate(@PathVariable Long orderId, @RequestBody LocalDateTime date){
-        orderService.updateDeliverDate(orderId, date);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
-    }
+//
+//    //배송 완료 시간 수정
+//    @PatchMapping("/{orderId}/deliverDate")
+//    public ResponseEntity<ApiResponse<?>> updateDeliverDate(@PathVariable Long orderId, @RequestBody LocalDateTime date){
+//        orderService.updateDeliverDate(orderId, date);
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(ApiResponse.success(SuccessType.SUCCESS));
+//    }
 
     // 주문 삭제(detail 까지 한번에 삭제)
     @DeleteMapping("/{orderId}/cansel")

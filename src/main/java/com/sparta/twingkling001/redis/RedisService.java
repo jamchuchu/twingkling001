@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,25 +20,25 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class RedisService {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
 
 
     public void setValues(String key, Object data) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(data);
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, json);
     }
 
     public void setValues(String key, String data, Duration duration) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, data, duration);
     }
 
     @Transactional(readOnly = true)
     public String getValues(String key) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
         String json = (String) values.get(key);
         if (json == null) {
             return null;
@@ -47,7 +48,7 @@ public class RedisService {
 
     @Transactional(readOnly = true)
     public <T> T getValues(String key, Class<T> valueType) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
         String json = (String) values.get(key);
         if (json == null) {
             return null;
@@ -60,6 +61,23 @@ public class RedisService {
         }
     }
 
+    // Key-Set
+
+
+    public void addSetValue(String key, String value) {
+        SetOperations<String, String> setOps = redisTemplate.opsForSet();
+        setOps.add(key, value);
+    }
+
+    public Set<String> getSetValues(String key) {
+        SetOperations<String, String> setOps = redisTemplate.opsForSet();
+        return setOps.members(key);
+    }
+
+    public void removeSetValue(String key, String value) {
+        SetOperations<String, String> setOps = redisTemplate.opsForSet();
+        setOps.remove(key, value);
+    }
 
     public void deleteValues(String key) {
         redisTemplate.delete(key);

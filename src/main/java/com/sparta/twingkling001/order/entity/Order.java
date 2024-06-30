@@ -29,6 +29,7 @@ public class Order {
     private LocalDateTime deliverDate;
     private LocalDateTime createAt;
     private Boolean deletedYn;
+    @Enumerated(EnumType.STRING)
     private OrderState orderState;
     private Long totalPrice;
     private Long deliverFee;
