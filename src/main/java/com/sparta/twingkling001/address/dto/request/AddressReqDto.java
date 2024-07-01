@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class AddressReqDto {
-    private Long addressId;
     private Long zipNumber;
     private String addressMain;
     private String addressDetail;
-    private Boolean deletedYn;
 }
