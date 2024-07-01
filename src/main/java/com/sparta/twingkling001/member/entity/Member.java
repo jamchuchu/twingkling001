@@ -1,7 +1,6 @@
 package com.sparta.twingkling001.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.twingkling001.config.LocalDateTimeAttributeConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
