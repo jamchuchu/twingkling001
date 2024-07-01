@@ -38,6 +38,12 @@ spring:
             trust: smtp.naver.com
         debug: true
 
+jwt:
+  secret: ${SECRET.JWT_SECRET}
+
+address:
+  key: ${SECRET.SECRET_KEY}
+
 # logging:
 #   level:
 #     org.hibernate.SQL: debug

@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: ${SECRET.DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${SECRET.DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SECRET.DB_PASSWORD}
+      SPRING_REDIS_HOST: ${SECRET.REDIS_HOST}
+      SPRING_REDIS_PORT: ${SECRET.REDIS_PORT}
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SECRET.DB_PASSWORD}
+      MYSQL_DATABASE: twingkling
+    ports:
+      - "3307:3306"
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
