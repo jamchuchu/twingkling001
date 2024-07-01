@@ -107,7 +107,7 @@ public class OrderService {
             throw new IllegalStateException("Order not found");
         }
         order.setPaymentDate(date);
-        order.setOrderState(OrderState.ORDER_COMPLETED);
+        order.setOrderState(OrderState.PAY_COMPLETED);
     }
 
 
@@ -136,7 +136,7 @@ public class OrderService {
         if(order == null){
             throw new IllegalStateException("Order not found");
         }
-        if(order.getOrderState().equals(OrderState.ORDER_COMPLETED) || order.getOrderState().equals(OrderState.PREPARING_FOR_SHIPMENT)) {
+        if(order.getOrderState().equals(OrderState.PAY_COMPLETED) || order.getOrderState().equals(OrderState.PREPARING_FOR_SHIPMENT)) {
             order.setDeletedYn(true);
             order.setOrderState(OrderState.CANSEL);
         }
