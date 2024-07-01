@@ -24,29 +24,15 @@ public class Address {
     private String addressDetail;
     private Boolean deletedYn;
 
-    public void setZipNumber(Long zipNumber) {
-        this.zipNumber = zipNumber;
-    }
-
-    public void setAddressMain(String addressMain) {
-        this.addressMain = addressMain;
-    }
-
-    public void setAddressDetail(String addressDetail) {
-        this.addressDetail = addressDetail;
-    }
-
     public void setDeletedYn(Boolean deletedYn) {
         this.deletedYn = deletedYn;
     }
 
     public static Address from(AddressReqDto reqDto){
         return Address.builder()
-                .addressId(reqDto.getAddressId())
                 .zipNumber(reqDto.getZipNumber())
                 .addressMain(reqDto.getAddressMain())
                 .addressDetail(reqDto.getAddressDetail())
-                .deletedYn(reqDto.getDeletedYn())
                 .build();
     }
 }

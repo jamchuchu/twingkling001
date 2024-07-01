@@ -25,7 +25,7 @@ public class OrderReqDto {
     private LocalDateTime createAt;
     private Boolean deletedYn;
     @Enumerated
-    private OrderState orderState;
+    private OrderState orderState = OrderState.ORDER_COMPLETED;
     private Long totalPrice;
     private Long deliverFee;
     private Long payId;
