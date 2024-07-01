@@ -1,15 +1,13 @@
-##spring:
-##  datasource:
-##    url: ${{secrets.DB_URL}}
-##    username: ${{secrets.USERNAME}}
-##    password: ${{secrets.DB_PASSWORD}}
-##    driver-class-name: com.mysql.cj.jdbc.Driver
 spring:
+  profiles:
+    active: dev
+
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/twingkling
-    username: root
-    password: 1234
+    url: ${SECRETS.DB_URL}
+    username: ${SECRETS.DB_USERNAME}
+    password: ${SECRETS.DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 
   jpa:
     hibernate:
@@ -19,13 +17,34 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-#  data:
-#    redis:
-#      host: 43.203.234.52
-#      post: 6379
+  data:
+    redis:
+      host: ${SECRETS.REDIS_HOST}
+      port: ${SECRETS.REDIS_PORT}
 
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ${SECRETS.SPRING_MAIL_USERNAME}
+    password: ${SECRETS.SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+            trust: smtp.naver.com
+        debug: true
 
-#logging:
-#    level:
-#      org.hibernate.SQL: debug
-#      org.hibernate.type: trace
+jwt:
+  secret: ${SECRET.JWT_SECRET}
+
+address:
+  key: ${SECRET.SECRET_KEY}
+
+# logging:
+#   level:
+#     org.hibernate.SQL: debug
+#     org.hibernate.type: trace

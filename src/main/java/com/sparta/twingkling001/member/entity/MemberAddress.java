@@ -1,13 +1,17 @@
 package com.sparta.twingkling001.member.entity;
 
+import com.sparta.twingkling001.address.entity.Address;
+import com.sparta.twingkling001.member.dto.request.MemberAddressReqDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
@@ -16,18 +20,34 @@ import java.time.LocalDateTime;
 public class MemberAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_address_id")
-    private Long id;
-
-    @Column(name = "address_detail_id")
-    private Long addressDetailId;
-
-    @Column(name = "member_id")
+    private Long memberAddressId;
+    @OneToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "address_id")
+    private Address address ;
     private Long memberId;
-
-    @Column(name = "is_primary")
     private Boolean isPrimary;
-
-    @Column(name = "used_at")
     private LocalDateTime usedAt;
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setUsedAt(LocalDateTime usedAt) {
+        this.usedAt = usedAt;
+    }
+
+    public void setPrimary(Boolean primary) {
+        isPrimary = primary;
+    }
+
+    public static MemberAddress from(Address address, MemberAddressReqDto reqDto){
+        return MemberAddress.builder()
+                .memberAddressId(reqDto.getMemberAddressId())
+                .address(address)
+                .memberId(reqDto.getMemberId())
+                .isPrimary(reqDto.isPrimary())
+                .usedAt(reqDto.getUsedAt())
+                .build();
+    }
+
 }
