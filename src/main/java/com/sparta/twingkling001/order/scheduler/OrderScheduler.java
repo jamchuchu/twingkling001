@@ -21,7 +21,7 @@ public class OrderScheduler {
 
 
     // 매일 오후 4시 배송 중에서 배송완료로 변경
-    @Scheduled(cron = OrderConstants.STATE_CHANGE_TIME)
+    @Scheduled(cron = OrderConstants.SHIP_COMPLETE_TIME)
     public void scheduleChangeStateToDelivered() {
         Set<String> set = redisService.getSetValues(OrderConstants.SHIPPED);
         LocalDateTime now = LocalDateTime.now().withHour(16).withMinute(0).withSecond(0).withNano(0);
@@ -32,7 +32,7 @@ public class OrderScheduler {
     }
 
     // 매일 오후 4시 결제 완료에서 배송중으로 변경
-    @Scheduled(cron = OrderConstants.STATE_CHANGE_TIME)
+    @Scheduled(cron = OrderConstants.SHIP_START_TIME)
     public void scheduleChangeStateToShipped() {
         Set<String> set = redisService.getSetValues(OrderConstants.AWAIT_SHIP);
         for (String o : set) {
