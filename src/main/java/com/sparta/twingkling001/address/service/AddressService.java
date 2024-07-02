@@ -57,6 +57,12 @@ public class AddressService {
     @Transactional
     public void deleteAddress(long addressId) {
         Address address = entityManager.find(Address.class, addressId);
+        if(address == null){
+            throw new NullPointerException("해당 주소가 없습니다");
+        }
+        if(address.getDeletedYn()){
+            throw new IllegalArgumentException("이미 삭제된 주소 입니다");
+        }
         address.setDeletedYn(true);
     }
 }
