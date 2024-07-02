@@ -32,10 +32,11 @@ public class ProductDetail {
 
     private Long saleQuantity;
 
-    private Long detailPrice;
-
     @Enumerated(EnumType.STRING)
     private SaleState saleState;
+
+    private Long detailPrice;
+
 
     public void setDetailTypeName(String detailTypeName) {
         this.detailTypeName = detailTypeName;

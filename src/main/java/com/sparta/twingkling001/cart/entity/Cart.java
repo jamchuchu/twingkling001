@@ -18,4 +18,8 @@ public class Cart {
     private Long cartId;
     private Long memberId;
     private Boolean deletedYn;
+
+    public void setDeletedYn(Boolean deletedYn) {
+        this.deletedYn = deletedYn;
+    }
 }

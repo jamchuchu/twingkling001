@@ -3,6 +3,7 @@ package com.sparta.twingkling001.cart.controller;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.cart.dto.request.CartDetailReqDto;
+import com.sparta.twingkling001.cart.dto.response.CartDetailRespDto;
 import com.sparta.twingkling001.cart.dto.response.CartRespDto;
 import com.sparta.twingkling001.cart.entity.CartDetail;
 import com.sparta.twingkling001.cart.service.CartService;
@@ -39,15 +40,15 @@ public class CartController {
     }
 
     //카트에 물건 추가
-    @GetMapping("/{memberId}")
-    public ResponseEntity<ApiResponse<?>> createCartDetail(@PathVariable Long memberId, @RequestBody CartDetailReqDto reqDto) {
-        cartService.addCartDetail(memberId, reqDto);
+    @PostMapping("/detail/{memberId}")
+    public ResponseEntity<ApiResponse<CartDetailRespDto>> createCartDetail(@PathVariable Long memberId, @RequestBody CartDetailReqDto reqDto) {
+        CartDetailRespDto response = cartService.addCartDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS_CREATE));
+                .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
 
-    @GetMapping("/{cartId}")
+    @GetMapping("/detail/{cartId}")
     public ResponseEntity<ApiResponse<?>> getCartDetails(@PathVariable Long cartId){
         List<CartDetail> response = cartService.getCartDetails(cartId);
         return ResponseEntity
@@ -57,26 +58,25 @@ public class CartController {
 
 
     //카트에 물건 양 조절
-    @PatchMapping("/{cartDetailId}")
+    @PatchMapping("/detail/{cartDetailId}")
     public ResponseEntity<ApiResponse<?>> updateProductQuantity(@PathVariable Long cartDetailId, @RequestParam Long quantity){
         cartService.updateProductQuantity(cartDetailId, quantity);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE));
     }
-    //물건 삭제시 해당 물건 판매 전부 false /  물건 재판매시 해당 물건 판매 전부 true
-    @PatchMapping("/{productId}/{isSale}")
-    public ResponseEntity<ApiResponse<?>> updatePresentSaleYn(@PathVariable Long productId, boolean isSale) {
-        cartService.updatePresentSaleYn(productId, isSale);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
-    }
+
+//    //물건 삭제시 해당 물건 판매 전부 false /  물건 재판매시 해당 물건 판매 전부 true
+//    @PatchMapping("/detail/{productId}/is-sale")
+//    public ResponseEntity<ApiResponse<?>> updatePresentSaleYn(@PathVariable Long productId, @RequestParam boolean isSale) {
+//        cartService.updatePresentSaleYn(productId, isSale);
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(ApiResponse.success(SuccessType.SUCCESS));
+//    }
 
 
-
-
-    @DeleteMapping("/{cartDetailId}")
+    @DeleteMapping("/detail/{cartDetailId}")
     public ResponseEntity<ApiResponse<?>> deleteCartDetail(@PathVariable Long cartDetailId) {
         cartService.deleteCartDetail(cartDetailId);
         return ResponseEntity

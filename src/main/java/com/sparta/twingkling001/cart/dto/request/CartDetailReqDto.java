@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CartDetailReqDto {
     private Long cartId;
-    private Long productId;
+    private Long productDetailId;
     private Long quantity;
     private Boolean presentSaleYn;
 }
