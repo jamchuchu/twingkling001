@@ -1,5 +1,8 @@
 package com.sparta.twingkling001.cart.controller;
 
+import com.sparta.twingkling001.api.exception.cart.CartAlreadyExistsException;
+import com.sparta.twingkling001.api.exception.general.AlreadyDeletedException;
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.cart.dto.request.CartDetailReqDto;
@@ -23,16 +26,25 @@ public class CartController {
 
     //회원가입 시 빈카트 생성
     @PostMapping("/{memberId}")
-    public ResponseEntity<ApiResponse<CartRespDto>> addEmptyCart(@PathVariable Long memberId) {
+    public ResponseEntity<ApiResponse<CartRespDto>> addEmptyCart(@PathVariable Long memberId) throws CartAlreadyExistsException {
         CartRespDto response = cartService.addEmptyCart(memberId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
 
+    //카트 조회
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ApiResponse<CartRespDto>> getCart(@PathVariable Long memberId) throws DataNotFoundException {
+        CartRespDto response = cartService.getCart(memberId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+    }
+
     //회원 탈퇴 시 삭제
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<ApiResponse<?>> deleteCart(@PathVariable Long memberId) {
+    public ResponseEntity<ApiResponse<?>> deleteCart(@PathVariable Long memberId) throws DataNotFoundException, AlreadyDeletedException {
         cartService.deleteCart(memberId);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -41,15 +53,15 @@ public class CartController {
 
     //카트에 물건 추가
     @PostMapping("/detail/{memberId}")
-    public ResponseEntity<ApiResponse<CartDetailRespDto>> createCartDetail(@PathVariable Long memberId, @RequestBody CartDetailReqDto reqDto) {
+    public ResponseEntity<ApiResponse<CartDetailRespDto>> createCartDetail(@PathVariable Long memberId, @RequestBody CartDetailReqDto reqDto) throws DataNotFoundException {
         CartDetailRespDto response = cartService.addCartDetail(reqDto);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
 
     @GetMapping("/detail/{cartId}")
-    public ResponseEntity<ApiResponse<?>> getCartDetails(@PathVariable Long cartId){
+    public ResponseEntity<ApiResponse<List<CartDetail>>> getCartDetails(@PathVariable Long cartId){
         List<CartDetail> response = cartService.getCartDetails(cartId);
         return ResponseEntity
                 .status(HttpStatus.OK)

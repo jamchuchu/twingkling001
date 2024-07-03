@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Long> {
+    boolean existsProductDetailByProductDetailId(Long productDetailId);
     ProductDetail findProductDetailByProductDetailId(Long productDetailId);
     List<ProductDetail> findProductDetailsByProductId(Long productId);
     List<ProductDetail> findProductDetailsByProductIdAndDetailType(long productId, DetailType detailType);

@@ -1,5 +1,10 @@
 package com.sparta.twingkling001.cart.service;
 
+import com.sparta.twingkling001.api.exception.*;
+
+import com.sparta.twingkling001.api.exception.cart.CartAlreadyExistsException;
+import com.sparta.twingkling001.api.exception.general.AlreadyDeletedException;
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.cart.dto.request.CartDetailReqDto;
 import com.sparta.twingkling001.cart.dto.response.CartDetailRespDto;
 import com.sparta.twingkling001.cart.dto.response.CartRespDto;
@@ -29,7 +34,10 @@ public class CartService {
     private final ProductDetailRepository productDetailRepository;
 
 
-    public CartRespDto addEmptyCart(Long memberId) {
+    public CartRespDto addEmptyCart(Long memberId) throws CartAlreadyExistsException {
+        if(cartRepository.existsCartByMemberId(memberId)){
+            throw new CartAlreadyExistsException();
+        }
         Cart cart = Cart.builder()
                 .memberId(memberId)
                 .deletedYn(false)
@@ -37,20 +45,31 @@ public class CartService {
         return CartRespDto.from(cartRepository.save(cart));
     }
 
-    @Transactional
-    public void deleteCart(Long memberId) {
+    public CartRespDto getCart(Long memberId) throws DataNotFoundException {
         Cart cart = cartRepository.findCartByMemberId(memberId);
         if(cart == null){
-            throw new NullPointerException("해당 데이터가 없습니다");
+            throw new DataNotFoundException();
         }
-        if(cart.getDeletedYn()){
-            throw new IllegalArgumentException("이미 삭제된 데이터 입니다");
-        }
-        cart.setDeletedYn(true);
+        return CartRespDto.from(cart);
     }
 
     @Transactional
-    public CartDetailRespDto addCartDetail(CartDetailReqDto reqDto) {
+    public void deleteCart(Long memberId) throws DataNotFoundException, AlreadyDeletedException {
+        Cart cart = cartRepository.findCartByMemberId(memberId);
+        if(cart == null){
+            throw new DataNotFoundException();
+        }
+        if(cart.getDeletedYn()){
+            throw new AlreadyDeletedException();
+        }
+        cart.setDeletedYn(true);
+        cart.getDetails().forEach(
+                detail -> deleteCartDetail(detail.getCartDetailId())
+        );
+    }
+
+    @Transactional
+    public CartDetailRespDto addCartDetail(CartDetailReqDto reqDto) throws DataNotFoundException {
         CartDetail cd = CartDetail.from(reqDto);
         CartDetail alreadyExist = cartDetailRepository.findCartDetailByProductDetailIdAndCartId(reqDto.getProductDetailId(), reqDto.getCartId());
         //이미 같은게 있으면 숫자 up
@@ -58,10 +77,10 @@ public class CartService {
             alreadyExist.setQuantity(alreadyExist.getQuantity()+reqDto.getQuantity());
             return CartDetailRespDto.from(alreadyExist);
         }
-        ProductDetail productDetail = productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductDetailId());
+        boolean exist = productDetailRepository.existsProductDetailByProductDetailId(reqDto.getProductDetailId());
         //productId가 없으면 error
-        if(productDetail == null){
-            throw new NullPointerException("선택하신 상품이 없습니다");
+        if(exist){
+            throw new DataNotFoundException();
         }
         return CartDetailRespDto.from(cartDetailRepository.save(cd));
     }
