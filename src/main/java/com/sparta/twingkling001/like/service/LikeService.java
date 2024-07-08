@@ -21,8 +21,7 @@ public class LikeService {
         }else {
             if (!like.getDeletedYn()) {
                 like.setDeletedYn(true);
-            }
-            if (like.getDeletedYn()) {
+            }else{
                 like.setDeletedYn(false);
             }
         }
