@@ -154,7 +154,7 @@ public class OrderController {
 
     // 주문 환불(detail 까지 한번에 삭제)
     @DeleteMapping("/{orderId}/refund")
-    public ResponseEntity<ApiResponse<?>> refundOrder (Long orderId) {
+    public ResponseEntity<ApiResponse<?>> refundOrder (Long orderId) throws Exception {
         orderService.refundOrder(orderId);
         orderService.deleteOrderDetailByOrderId(orderId);
         return ResponseEntity
