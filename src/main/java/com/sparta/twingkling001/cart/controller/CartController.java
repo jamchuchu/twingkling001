@@ -60,9 +60,9 @@ public class CartController {
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE, response));
     }
 
-    @GetMapping("/detail/{cartId}")
-    public ResponseEntity<ApiResponse<List<CartDetail>>> getCartDetails(@PathVariable Long cartId){
-        List<CartDetail> response = cartService.getCartDetails(cartId);
+    @GetMapping("/detail/{memberId}")
+    public ResponseEntity<ApiResponse<List<CartDetail>>> getCartDetails(@PathVariable Long memberId){
+        List<CartDetail> response = cartService.getCartDetails(memberId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
@@ -78,14 +78,14 @@ public class CartController {
                 .body(ApiResponse.success(SuccessType.SUCCESS_CREATE));
     }
 
-//    //물건 삭제시 해당 물건 판매 전부 false /  물건 재판매시 해당 물건 판매 전부 true
-//    @PatchMapping("/detail/{productId}/is-sale")
-//    public ResponseEntity<ApiResponse<?>> updatePresentSaleYn(@PathVariable Long productId, @RequestParam boolean isSale) {
-//        cartService.updatePresentSaleYn(productId, isSale);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(ApiResponse.success(SuccessType.SUCCESS));
-//    }
+    //물건 삭제시 해당 물건 판매 전부 false /  물건 재판매시 해당 물건 판매 전부 true
+    @PatchMapping("/detail/{productId}/is-sale")
+    public ResponseEntity<ApiResponse<?>> updatePresentSaleYn(@PathVariable Long productId, @RequestParam boolean isSale) {
+        cartService.updatePresentSaleYn(productId, isSale);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS));
+    }
 
 
     @DeleteMapping("/detail/{cartDetailId}")

@@ -29,8 +29,8 @@ public class ProductService {
     public ProductRespDto addProduct(ProductReqDto reqDto) {
         Product product = productRepository.save(Product.from(reqDto));
         List<ProductDetail> details = reqDto.getDetails().stream()
-            .map(ProductDetail::from)
-            .map(productDetailRepository::save).toList();
+                .map(ProductDetail::from)
+                .map(productDetailRepository::save).toList();
         return ProductRespDto.from(product, details);
     }
 
@@ -44,9 +44,20 @@ public class ProductService {
         List<ProductRespDto> products = productRepository.findProductsByMemberId(memberId).stream()
                 .map(ProductRespDto::from).toList();
         products.forEach(product -> {
-           Long productId = product.getProductId();
-           List<ProductDetail> details = productDetailRepository.findProductDetailsByProductId(productId);
-           product.setDetails(details);
+            Long productId = product.getProductId();
+            List<ProductDetail> details = productDetailRepository.findProductDetailsByProductId(productId);
+            product.setDetails(details);
+        });
+        return products;
+    }
+
+    public List<ProductRespDto> getProductsByMemberIdAndState(Long memberId, SaleState saleState) {
+        List<ProductRespDto> products = productRepository.findProductsByMemberIdAndSaleState(memberId, saleState).stream()
+                .map(ProductRespDto::from).toList();
+        products.forEach(product -> {
+            Long productId = product.getProductId();
+            List<ProductDetail> details = productDetailRepository.findProductDetailsByProductId(productId);
+            product.setDetails(details);
         });
         return products;
     }
@@ -128,5 +139,6 @@ public class ProductService {
     public void deleteProductDetail(long productDetailId) {
         productDetailRepository.deleteByProductDetailId(productDetailId);
     }
+
 
 }

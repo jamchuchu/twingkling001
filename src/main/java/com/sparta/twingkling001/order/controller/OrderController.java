@@ -52,7 +52,8 @@ public class OrderController {
         response.setOrderDetails(orderDetailRespDtoList);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS));
+//                .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
 
     //주문 조회
@@ -145,7 +146,7 @@ public class OrderController {
     @DeleteMapping("/{orderId}/cansel")
     public ResponseEntity<ApiResponse<?>> deliteOrder (Long orderId) {
         orderService.deleteOrder(orderId);
-        orderService.deleteOrderDetailByOrderId(orderId);
+//        orderService.deleteOrderDetailByOrderId(orderId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS));

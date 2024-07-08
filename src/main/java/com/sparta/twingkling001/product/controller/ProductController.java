@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     //물건 정보 디테일까지 들고오기
-    @GetMapping("/id/{productId}")
+    @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductRespDto>> getProductByProductId(@PathVariable Long productId) {
         ProductRespDto response = productService.getProductByProductId(productId);
         return ResponseEntity
@@ -51,7 +51,7 @@ public class ProductController {
     }
 
     //판매자별 판매 물건 들고오기
-    @GetMapping("/member/{memberId}")
+    @GetMapping("/seller/{memberId}")
     public ResponseEntity<ApiResponse<List<ProductRespDto>>> getProductByMemberId(@PathVariable Long memberId) {
         List<ProductRespDto> response = productService.getProductsByMemberId(memberId);
         return ResponseEntity
@@ -60,11 +60,12 @@ public class ProductController {
     }
 
     //판매자별 물건 상태별로 들고오기
-    @GetMapping("/{memberId}/{saleState}")
-    public ResponseEntity<ApiResponse<?>> getProductByMemberIdAndSaleState() {
+    @GetMapping("/seller/{memberId}/state")
+    public ResponseEntity<ApiResponse<?>> getProductByMemberIdAndSaleState(@PathVariable Long memberId, @RequestParam SaleState saleState) {
+        List<ProductRespDto> response = productService.getProductsByMemberIdAndState(memberId, saleState);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
 
 
@@ -79,15 +80,15 @@ public class ProductController {
 
 
     //판매 상태 변경
-    @PatchMapping("/{productId}")
-        public ResponseEntity<ApiResponse<?>> updateSaleState (@PathVariable Long productId, @RequestParam SaleState state){
+    @PatchMapping("/{productId}/state")
+    public ResponseEntity<ApiResponse<?>> updateSaleState (@PathVariable Long productId, @RequestParam SaleState state){
         productService.updateSaleState(productId, state);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS));
-        }
+    }
 
-    //삭제
+    //전체 삭제
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse<?>> deleteProduct(@PathVariable Long productId){
         productService.deleteProduct(productId);
@@ -98,8 +99,17 @@ public class ProductController {
     }
 
 
+    //판매 추가 정보 detailtype별로 들고오기
+    @GetMapping("/{productId}/details/{detailType}")
+    public ResponseEntity<ApiResponse<?>> getProductDetailByDetailType(@PathVariable long productId, DetailType detailType) {
+        List<ProductDetail> response = productService.getProductDetailByDetailType(productId, detailType);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+    }
+
     //판매 추가정보 개별 추가
-    @PostMapping("/{productId}")
+    @PostMapping("/{productId}/detail")
     public ResponseEntity<ApiResponse<ProductDetailRespDto>> addProductDetail (@PathVariable Long productId, @RequestBody ProductDetailReqDto reqDto){
         ProductDetailRespDto response = productService.addProductDetail(reqDto);
         return ResponseEntity
@@ -116,17 +126,10 @@ public class ProductController {
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
 
-    //판매 추가 정보 detailtype별로 들고오기
-    @GetMapping("/{productId}/{detailType}")
-    public ResponseEntity<ApiResponse<?>> getProductDetailByDetailType(@PathVariable long productId, DetailType detailType) {
-        List<ProductDetail> response = productService.getProductDetailByDetailType(productId, detailType);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
-    }
+
 
     //판매 추가 정보 개별 수정
-    @PutMapping("/{productId}/details")
+    @PutMapping("/{productId}/detail")
     public ResponseEntity<ApiResponse<?>> updateProductDetails (@PathVariable Long productId, @RequestBody ProductDetailReqDto reqDto){
         productService.updateProductDetails(reqDto);
         return ResponseEntity
@@ -135,7 +138,7 @@ public class ProductController {
     }
 
     //판매 추가 정보 전체 삭제
-    @DeleteMapping("/{productId}/detail")
+    @DeleteMapping("/{productId}/details")
     public ResponseEntity<ApiResponse<?>> deleteProductDetails (@PathVariable Long productId ){
         productService.deleteProductDetails(productId);
         return ResponseEntity
@@ -144,7 +147,7 @@ public class ProductController {
     }
 
     //판매 추가 정보 개별 삭제
-    @DeleteMapping("/{productId}/{productDetailId}")
+    @DeleteMapping("/{productId}/detail/{productDetailId}")
     public ResponseEntity<ApiResponse<?>> deleteProduct (@PathVariable Long productId, long productDetailId){
         productService.deleteProductDetail(productDetailId);
         return ResponseEntity
