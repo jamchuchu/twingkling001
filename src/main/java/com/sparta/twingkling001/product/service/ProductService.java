@@ -1,5 +1,7 @@
 package com.sparta.twingkling001.product.service;
 
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
+import com.sparta.twingkling001.api.exception.product.NoStockException;
 import com.sparta.twingkling001.product.constant.DetailType;
 import com.sparta.twingkling001.product.constant.SaleState;
 import com.sparta.twingkling001.product.dto.request.ProductDetailReqDto;
@@ -23,8 +25,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public ProductRespDto addProduct(ProductReqDto reqDto) {
         Product product = productRepository.save(Product.from(reqDto));
@@ -109,8 +110,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void updateProductDetails(ProductDetailReqDto reqDto) {
+    public void updateProductDetails(ProductDetailReqDto reqDto) throws DataNotFoundException {
         ProductDetail detail = entityManager.find(ProductDetail.class, reqDto.getProductDetailId());
+        if(detail == null){
+            throw new DataNotFoundException();
+        }
         detail.setDetailTypeName(reqDto.getDetailTypeName());
         detail.setSaleQuantity(reqDto.getSaleQuantity());
         detail.setDetailPrice(reqDto.getDetailPrice());
@@ -118,17 +122,23 @@ public class ProductService {
     }
 
 
-    public void plusProductQuantity(Long ProductDetailId){
+    public void plusProductQuantity(Long ProductDetailId) throws DataNotFoundException {
         ProductDetail detail = entityManager.find(ProductDetail.class, ProductDetailId);
+        if(detail == null){
+            throw new DataNotFoundException();
+        }
         detail.setSaleQuantity(detail.getSaleQuantity()+1);
     }
 
-    public void minusProductQuantity(Long ProductDetailId){
+    public void minusProductQuantity(Long ProductDetailId) throws Exception {
         ProductDetail detail = entityManager.find(ProductDetail.class, ProductDetailId);
+        if(detail == null){
+            throw new DataNotFoundException();
+        }
         if(detail.getSaleQuantity() > 0) {
             detail.setSaleQuantity(detail.getSaleQuantity() - 1);
         }else{
-            throw new IllegalArgumentException("재고가 없습니다");
+            throw new NoStockException();
         }
     }
 

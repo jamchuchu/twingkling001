@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.product.controller;
 
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.product.constant.DetailType;
@@ -130,7 +131,7 @@ public class ProductController {
 
     //판매 추가 정보 개별 수정
     @PutMapping("/{productId}/detail")
-    public ResponseEntity<ApiResponse<?>> updateProductDetails (@PathVariable Long productId, @RequestBody ProductDetailReqDto reqDto){
+    public ResponseEntity<ApiResponse<?>> updateProductDetails (@PathVariable Long productId, @RequestBody ProductDetailReqDto reqDto) throws DataNotFoundException {
         productService.updateProductDetails(reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
