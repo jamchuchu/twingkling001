@@ -23,8 +23,9 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public static Category from(String categoryName) {
+    public static Category from(Long upperCategoryId , String categoryName) {
         return Category.builder()
+                .upperCategoryId(upperCategoryId)
                 .categoryName(categoryName)
                 .build();
     }
