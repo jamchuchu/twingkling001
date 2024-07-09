@@ -22,20 +22,15 @@ public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDetailId;
-
     private Long productId;
-
     @Enumerated(EnumType.STRING)
     private DetailType detailType;
-
     private String detailTypeName;
-
     private Long saleQuantity;
-
-    private Long detailPrice;
-
     @Enumerated(EnumType.STRING)
     private SaleState saleState;
+    private Long detailPrice;
+
 
     public void setDetailTypeName(String detailTypeName) {
         this.detailTypeName = detailTypeName;

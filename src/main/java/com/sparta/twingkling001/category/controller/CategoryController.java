@@ -1,6 +1,7 @@
 package com.sparta.twingkling001.category.controller;
 
 
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.category.dto.response.CategoryRespDto;
@@ -66,7 +67,7 @@ public class CategoryController {
 
     // 카테고리 이름 수정
     @PatchMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse<?>> updateCategoryName (@PathVariable Long categoryId, @RequestParam String categoryName){
+    public ResponseEntity<ApiResponse<?>> updateCategoryName (@PathVariable Long categoryId, @RequestParam String categoryName) throws DataNotFoundException {
         categoryService.updateCategoryName(categoryId, categoryName);
         return ResponseEntity
                 .status(HttpStatus.OK)

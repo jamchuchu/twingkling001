@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.cart.entity;
 
+import com.sparta.twingkling001.cart.dto.request.CartDetailReqDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +17,9 @@ public class CartDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartDetailId;
+    @Column(name = "cart_id", nullable = false)
     private Long cartId;
-    private Long productId;
+    private Long productDetailId;
     private Long quantity;
     private Boolean presentSaleYn;
 
@@ -27,5 +29,14 @@ public class CartDetail {
 
     public void setPresentSaleYn(Boolean presentSaleYn) {
         this.presentSaleYn = presentSaleYn;
+    }
+
+    public static CartDetail from(CartDetailReqDto reqDto){
+        return CartDetail.builder()
+                .cartId(reqDto.getCartId())
+                .productDetailId(reqDto.getProductDetailId())
+                .quantity(reqDto.getQuantity())
+                .presentSaleYn(reqDto.getPresentSaleYn())
+                .build();
     }
 }
