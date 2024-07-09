@@ -1,5 +1,7 @@
 package com.sparta.twingkling001.order.service;
 
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
+import com.sparta.twingkling001.api.exception.product.NoStockException;
 import com.sparta.twingkling001.order.constant.OrderState;
 import com.sparta.twingkling001.order.dto.request.OrderQuantityReqDto;
 import com.sparta.twingkling001.order.dto.request.OrderReceiveReqDto;
@@ -41,7 +43,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) {
+    public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) throws Exception {
         Order order = entityManager.find(Order.class, orderId);
         if(order == null){
             throw new IllegalStateException("Order not found");
@@ -143,10 +145,14 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteOrderDetailByOrderId(Long orderId) {
+    public void deleteOrderDetailByOrderId(Long orderId) throws Exception {
         List<OrderDetail> details = orderDetailRepository.findOrderDetailsByOrder_OrderIdAndDeletedYnFalse(orderId);
         details.forEach(detail -> {
-            productService.plusProductQuantity(detail.getProductDetailId());
+            try {
+                productService.plusProductQuantity(detail.getProductDetailId());
+            } catch (DataNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             detail.setDeletedYn(true);
         });
     }

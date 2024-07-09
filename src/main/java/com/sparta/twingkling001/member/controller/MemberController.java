@@ -1,9 +1,12 @@
 package com.sparta.twingkling001.member.controller;
 
 import com.sparta.twingkling001.address.dto.request.AddressReqDto;
+import com.sparta.twingkling001.address.dto.response.AddressRespDto;
+import com.sparta.twingkling001.address.dto.response.PublicRespDto;
 import com.sparta.twingkling001.address.entity.Address;
 import com.sparta.twingkling001.address.service.AddressService;
 import com.sparta.twingkling001.api.exception.ErrorType;
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.login.mailSignup.MailService;
@@ -138,7 +141,7 @@ public class MemberController {
     }
 
     @PutMapping("/{memberId}/detail")
-    public ResponseEntity<ApiResponse<?>> updateMemberDetail(@PathVariable Long memberId, @RequestBody MemberDetailReqDto reqDto) {
+    public ResponseEntity<ApiResponse<?>> updateMemberDetail(@PathVariable Long memberId, @RequestBody MemberDetailReqDto reqDto) throws DataNotFoundException {
         memberService.updateMemberDetail(reqDto);
         return ResponseEntity
                 .status(HttpStatus.OK)

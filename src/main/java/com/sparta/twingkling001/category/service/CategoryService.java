@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.category.service;
 
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.category.dto.response.CategoryRespDto;
 import com.sparta.twingkling001.category.entity.Category;
 import com.sparta.twingkling001.category.repository.CategoryRepository;
@@ -16,11 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+
 
     public CategoryRespDto addCategory(Long upperCategoryId, String categoryName) {
-        Category category = categoryRepository.save(Category.from(categoryName));
+        Category category = categoryRepository.save(Category.from(upperCategoryId, categoryName));
         return CategoryRespDto.from(category);
     }
 
@@ -52,11 +53,13 @@ public class CategoryService {
         return CategoryRespDto.from(categoryRepository.findCategoryByCategoryId(categoryId));
     }
 
-    public void updateCategoryName(Long categoryId, String categoryName) {
+    public void updateCategoryName(Long categoryId, String categoryName) throws DataNotFoundException {
         Category category = entityManager.find(Category.class, categoryId);
-        if(category != null){
-            category.setCategoryName(categoryName);
+        if(category == null){
+            throw new DataNotFoundException();
         }
+        category.setCategoryName(categoryName);
+
     }
 
     public void deleteCategoryName(Long categoryId) {

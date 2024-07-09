@@ -6,8 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SuccessType {
-    SUCCESS_CREATE(200, "Operation successful"),
-    SUCCESS(200 ,"성공"),
+    //일반
+    SUCCESS_CREATE(201, "데이터가 추가 되었습니다"),
+    SUCCESS(200 ,"작업이 성공적으로 수행 되었습니다"),
+
+
     SEND_EMAIL(200, "이메일을 보냈습니다"),
     LOGIN_SUCCESS(200, "로그인 성공"),
     LOGOUT_SUCCESS(200, "로그아웃 성공");

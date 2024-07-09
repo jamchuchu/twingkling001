@@ -1,11 +1,13 @@
 package com.sparta.twingkling001.member.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Date;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class MemberDetailReqDto {
