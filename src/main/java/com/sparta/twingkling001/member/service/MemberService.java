@@ -2,6 +2,7 @@ package com.sparta.twingkling001.member.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twingkling001.api.exception.ErrorType;
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
@@ -101,8 +102,11 @@ public class MemberService {
     }
     //수정
     @Transactional
-    public void updateMemberDetail(MemberDetailReqDto reqDto) {
+    public void updateMemberDetail(MemberDetailReqDto reqDto) throws DataNotFoundException {
         MemberDetail memberDetail = entityManager.find(MemberDetail.class, reqDto.getMemberDetailId());
+        if(memberDetail == null){
+            throw new DataNotFoundException();
+        }
         memberDetail.setName(reqDto.getName());
         memberDetail.setNickname(reqDto.getNickname());
         memberDetail.setPhoneNumber(reqDto.getPhoneNumber());

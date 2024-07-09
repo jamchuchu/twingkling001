@@ -1,14 +1,12 @@
 package com.sparta.twingkling001.cart.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import com.sparta.twingkling001.api.exception.cart.CartAlreadyExistsException;
 import com.sparta.twingkling001.api.exception.general.AlreadyDeletedException;
 import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
-import com.sparta.twingkling001.cart.controller.CartController;
 import com.sparta.twingkling001.cart.dto.request.CartDetailReqDto;
 import com.sparta.twingkling001.cart.dto.response.CartDetailRespDto;
 import com.sparta.twingkling001.cart.dto.response.CartRespDto;
@@ -17,28 +15,25 @@ import com.sparta.twingkling001.cart.entity.CartDetail;
 import com.sparta.twingkling001.cart.repository.CartRepository;
 import com.sparta.twingkling001.cart.repository.CartDetailRepository;
 import com.sparta.twingkling001.cart.service.CartService;
-import com.sparta.twingkling001.member.repository.MemberRepository;
-import com.sparta.twingkling001.product.entity.Product;
-import com.sparta.twingkling001.product.entity.ProductDetail;
 import com.sparta.twingkling001.product.repository.ProductDetailRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-class CartServiceTests {
+class CartServiceTest {
     @Mock
     private CartRespDto cartRespDto;
     @Mock
