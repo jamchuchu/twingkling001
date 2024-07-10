@@ -1,0 +1,34 @@
+{
+  "HTTP 요청" : {
+    "transaction" : "HTTP 요청",
+    "sampleCount" : 5000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 2617.4258000000086,
+    "medianResTime" : 2643.5,
+    "minResTime" : 15.0,
+    "maxResTime" : 5127.0,
+    "pct1ResTime" : 4298.900000000001,
+    "pct2ResTime" : 4543.0,
+    "pct3ResTime" : 4915.99,
+    "throughput" : 930.0595238095239,
+    "receivedKBytesPerSec" : 543.1402297247023,
+    "sentKBytesPerSec" : 119.89048549107142
+  },
+  "총계" : {
+    "transaction" : "총계",
+    "sampleCount" : 5000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 2617.4258000000086,
+    "medianResTime" : 2643.5,
+    "minResTime" : 15.0,
+    "maxResTime" : 5127.0,
+    "pct1ResTime" : 4298.900000000001,
+    "pct2ResTime" : 4543.0,
+    "pct3ResTime" : 4915.99,
+    "throughput" : 930.0595238095239,
+    "receivedKBytesPerSec" : 543.1402297247023,
+    "sentKBytesPerSec" : 119.89048549107142
+  }
+}

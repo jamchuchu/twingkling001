@@ -1,0 +1,50 @@
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    url: ${SECRETS.DB_URL}
+    username: ${SECRETS.DB_USERNAME}
+    password: ${SECRETS.DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: ${SECRETS.REDIS_HOST}
+      port: ${SECRETS.REDIS_PORT}
+
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ${SECRETS.SPRING_MAIL_USERNAME}
+    password: ${SECRETS.SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+            trust: smtp.naver.com
+        debug: true
+
+jwt:
+  secret: ${SECRET.JWT_SECRET}
+
+address:
+  key: ${SECRET.SECRET_KEY}
+
+# logging:
+#   level:
+#     org.hibernate.SQL: debug
+#     org.hibernate.type: trace
