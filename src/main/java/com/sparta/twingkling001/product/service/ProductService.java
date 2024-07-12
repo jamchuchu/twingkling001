@@ -15,6 +15,8 @@ import com.sparta.twingkling001.product.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ public class ProductService {
                 .map(productDetailRepository::save).toList();
         return ProductRespDto.from(product, details);
     }
+
 
     public ProductRespDto getProductByProductId(Long productId) {
         Product product = productRepository.findProductByProductId(productId);
@@ -63,8 +66,8 @@ public class ProductService {
         return products;
     }
 
-    public List<ProductRespDto> getProductByProductName(String productName) {
-        List<ProductRespDto> products = productRepository.findProductsByProductNameLike(productName)
+    public List<ProductRespDto> getProductByProductName(String productName, Pageable pageable) {
+        List<ProductRespDto> products = productRepository.findProductsByProductNameContaining(productName, pageable)
                 .stream().map(ProductRespDto::from).toList();
         products.forEach(product ->{
             product.setDetails(productDetailRepository

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -170,7 +171,7 @@ class ProductServiceTest {
         when(productRepository.findProductsByProductNameLike(productName)).thenReturn(products);
         when(productDetailRepository.findProductDetailsByProductId(any(Long.class))).thenReturn(new ArrayList<>());
 
-        List<ProductRespDto> response = productService.getProductByProductName(productName);
+        List<ProductRespDto> response = productService.getProductByProductName(productName, PageRequest.of(1,1));
 
         List<ProductRespDto> expected = new ArrayList<>();
         for (Product p : products) {
