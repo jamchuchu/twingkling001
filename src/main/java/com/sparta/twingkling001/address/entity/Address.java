@@ -33,6 +33,7 @@ public class Address {
                 .zipNumber(reqDto.getZipNumber())
                 .addressMain(reqDto.getAddressMain())
                 .addressDetail(reqDto.getAddressDetail())
+                .deletedYn(false)
                 .build();
     }
 }

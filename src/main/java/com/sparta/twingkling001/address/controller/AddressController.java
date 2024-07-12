@@ -27,7 +27,7 @@ public class AddressController {
     }
 
     //주소 추가
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ApiResponse<?>> addAddress(@RequestBody AddressReqDto reqDto){
         AddressRespDto response = addressService.addAddress(reqDto);
         return ResponseEntity
