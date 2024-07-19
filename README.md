@@ -22,6 +22,7 @@
 2024년 6월 29일 - 2024년 7월 20일 (4주)
 ```
 
+
 ## 📊 ERD
 https://www.erdcloud.com/d/BatZefBiFtRkQefui
 ![image](https://github.com/user-attachments/assets/d720ff2d-1a2d-4ff4-99d4-89b2face7ceb)
@@ -80,11 +81,6 @@ https://www.erdcloud.com/d/BatZefBiFtRkQefui
 
 </details>
 
-### 아키텍처
-![image](https://github.com/user-attachments/assets/acd41e44-e0b7-4be1-99b0-3f7c9cc20f45)
-</br></br>
-
-
 ### 💡ERD 작성 시 고민 사항
 
 <details>
@@ -130,6 +126,12 @@ https://www.erdcloud.com/d/BatZefBiFtRkQefui
 ## 📡API 명세서
 https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 </br></br>
+
+## 🧩아키텍처
+![image](https://github.com/user-attachments/assets/1a6889ce-ccf0-4594-9cc5-3a9f26f166a9)
+
+</br></br>
+
 
 ## 🛠 기술스택
  **Tech Stack**                                                                                                   
