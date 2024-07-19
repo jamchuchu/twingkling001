@@ -80,6 +80,11 @@ https://www.erdcloud.com/d/BatZefBiFtRkQefui
 
 </details>
 
+### 아키텍처
+![image](https://github.com/user-attachments/assets/acd41e44-e0b7-4be1-99b0-3f7c9cc20f45)
+</br></br>
+
+
 ### 💡ERD 작성 시 고민 사항
 
 <details>
