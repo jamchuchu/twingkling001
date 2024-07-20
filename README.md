@@ -54,7 +54,7 @@
 ## 📊 ERD
 https://www.erdcloud.com/d/BatZefBiFtRkQefui
 ![image](https://github.com/user-attachments/assets/d720ff2d-1a2d-4ff4-99d4-89b2face7ceb)
-### 📘ERD 설계 상세 설명
+### 📘 ERD 설계 상세 설명
 
 <details>
 <summary>펼치기/접기</summary>
@@ -155,7 +155,7 @@ https://www.erdcloud.com/d/BatZefBiFtRkQefui
 https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 </br></br>
 
-## 🧩아키텍처
+## 🧩 아키텍처
 ![image](https://github.com/user-attachments/assets/1a6889ce-ccf0-4594-9cc5-3a9f26f166a9)
 
 </br></br>
@@ -459,7 +459,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 </br></br>
 
 
-## 🌳계층형 상품 카테고리 시스템
+## 🌳 계층형 상품 카테고리 시스템
 상위 카테고리에서 하위 카테고리로 세분화되는 구조를 통해 정확한 상품 분류가 가능합니다.
 <details>
 <summary>펼치기/접기</summary>
@@ -516,7 +516,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 ## ✉️ 이메일 인증을 통한 회원가입 프로세스
 ![image](https://github.com/user-attachments/assets/19e6db55-6d66-4c5d-986b-3be64863f34a)
-
+https://janchu.tistory.com/114
 
 <details>
 <summary>펼치기/접기</summary>
@@ -539,7 +539,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 </br></br>
 
 
-## 📦주문 배송 스케줄러
+## 📦 주문 배송 스케줄러
 주문된 상품의 배송 상태를 자동으로 업데이트하고 관리하는 시스템입니다.
 
 <details>
@@ -563,7 +563,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 </br></br>
 
 ## 🧪 단위 테스트 (JUnit)
-
+주요 비즈니스 로직에 대해 JUnit을 사용한 단위 테스트를 작성 하였습니다.
 <details>
 <summary>펼치기/접기</summary>
 
@@ -588,7 +588,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 </br></br>
 
 # 🔧 트러블 슈팅
-## ⚡ 주문 시스템 성능 개선
+## ⚡주문 시스템 성능 개선
 
 
 
@@ -620,4 +620,28 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 대량 주문 처리 시 안정적인 성능을 보여주었습니다.
 
 </br></br>
+
+## 📚학습정리
+### ORM
+</br></br>
+
+### transaction 격리 수준
+https://janchu.tistory.com/109
+</br></br>
+
+### security
+https://janchu.tistory.com/115
+</br></br>
+
+### docker
+</br></br>
+
+### CI/CD
+https://janchu.tistory.com/113
+</br></br>
+
+### 외부 api 사용
+https://janchu.tistory.com/116
+</br></br>
+
 
