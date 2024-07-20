@@ -506,7 +506,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 
 ## ✉️ 이메일 인증을 통한 회원가입 프로세스
-![image](https://github.com/user-attachments/assets/5556bb4f-054d-4431-90be-f0c1c2e1f249)
+![image](https://github.com/user-attachments/assets/19e6db55-6d66-4c5d-986b-3be64863f34a)
 
 
 <details>
