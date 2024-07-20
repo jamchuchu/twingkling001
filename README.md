@@ -201,12 +201,15 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 ### 특징
 <details>
 <summary>펼치기/접기</summary>  
+
 - **모듈화**: 각 기능(address, cart, category 등)이 독립적인 모듈로 구성되어 있습니다.
 - **계층 분리**: 각 모듈 내에서 controller, service, repository 등의 계층이 명확히 분리되어 있습니다.
 - **DTO 패턴**: request와 response DTO를 분리하여 데이터 전송 객체를 효과적으로 관리합니다.
 - **상수 관리**: constant 패키지를 통해 열거형 상수들을 관리합니다.
 - **엔티티 분리**: 데이터베이스 엔티티들이 entity 패키지에 명확히 정의되어 있습니다.
 </details>
+
+여기 토글 내용을 다시 작성했습니다. 원본 내용을 그대로 유지하면서 HTML의 <details> 태그를 사용한 토글 형식으로 제시했습니다. 이 형식은 HTML을 지원하는 환경에서 펼치기/접기 기능을 제공할 것입니다. 표시가 제대로 되는지 확인해 주시기 바랍니다.
 
 
 ### 장점
@@ -314,7 +317,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 - 판매자들에게 정확한 상품 분류 옵션제공
 - 계층적 구조를 통해 상품 검색과 관리가 용이
 - e-commerce 플랫폼의 확장 용이
-- 
+  
 </details>
 </br></br>
 
@@ -325,6 +328,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 <details>
 <summary>펼치기/접기</summary>
+
 ## 프로세스 흐름
 1. 사용자 회원가입 요청
     - 사용자가 로그인 정보를 입력하여 서버에 전송
@@ -339,7 +343,6 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
     - 서버로 인증 요청 전송
 5. 인증 완료 및 토큰 발급
     - 서버가 인증을 확인하고 사용자에게 토큰 발급
-
 </details>
 </br></br>
 
