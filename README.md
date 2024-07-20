@@ -581,8 +581,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 # 🔧 트러블 슈팅
 ## ⚡ 주문 시스템 성능 개선
 
-<details>
-<summary>펼치기/접기</summary>
+
 
 ## 주요 문제점
 1. 대량 주문 시 처리 속도 저하 (0.041 Apdex 스코어)
@@ -611,6 +610,5 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 최종적으로 Redis를 사용하지 않고 비동기 처리만을 적용한 방식은 
 Apdex 스코어 0.714를 기록하며, 대량 주문 처리 시 안정적인 성능을 보여주었습니다.
 
-</details>
 </br></br>
 
