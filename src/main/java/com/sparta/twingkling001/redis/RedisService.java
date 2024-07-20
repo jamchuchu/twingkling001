@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -87,6 +88,7 @@ public class RedisService {
         redisTemplate.expire(key, timeout, TimeUnit.MILLISECONDS);
     }
 
+
     public void setHashOps(String key, Map<String, String> data) {
         HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
         values.putAll(key, data);
@@ -97,6 +99,17 @@ public class RedisService {
         HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
         return Boolean.TRUE.equals(values.hasKey(key, hashKey)) ? (String) redisTemplate.opsForHash().get(key, hashKey) : "";
     }
+
+    public Map<String, String> getAllHashOps(String key) {
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+            result.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+        return result;
+    }
+
+
 
     public void deleteHashOps(String key, String hashKey) {
         HashOperations<String, Object, Object> values = redisTemplate.opsForHash();

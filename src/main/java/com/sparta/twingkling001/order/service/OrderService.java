@@ -2,6 +2,7 @@ package com.sparta.twingkling001.order.service;
 
 import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.exception.product.NoStockException;
+import com.sparta.twingkling001.api.exception.product.UnExpectedLockException;
 import com.sparta.twingkling001.order.constant.OrderState;
 import com.sparta.twingkling001.order.dto.request.OrderQuantityReqDto;
 import com.sparta.twingkling001.order.dto.request.OrderReceiveReqDto;
@@ -15,15 +16,21 @@ import com.sparta.twingkling001.order.repository.OrderDetailRepository;
 import com.sparta.twingkling001.order.repository.OrderRepository;
 import com.sparta.twingkling001.product.repository.ProductDetailRepository;
 import com.sparta.twingkling001.product.service.ProductService;
+import com.sparta.twingkling001.redis.RedisService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.integration.redis.util.RedisLockRegistry;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +42,11 @@ public class OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductDetailRepository productDetailRepository;
     private final EntityManager entityManager;
+    private final RedisService redisService;
+    private final RedisLockRegistry redisLockRegistry;
+    private final AsyncOrderProcessor asyncOrderProcessor;
+
+
 
 
     public OrderRespDto addOrder(OrderReqDto orderReqDto) {
@@ -46,16 +58,74 @@ public class OrderService {
     public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) throws Exception {
         Order order = entityManager.find(Order.class, orderId);
         if(order == null){
-            throw new IllegalStateException("Order not found");
+            throw new DataNotFoundException();
         }
         if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductDetailId()).getSaleQuantity() == 0){
-            throw new IllegalArgumentException("남은 판매 수량이 없습니다");
+            throw new NoStockException();
         }
-        OrderDetail detail = orderDetailRepository.save(OrderDetail.from(order, reqDto));
-        productService.minusProductQuantity(detail.getProductDetailId());
 
-        return OrderDetailRespDto.from(detail);
+        //redis 입력
+        OrderDetail detail = OrderDetail.from(order, reqDto);
+        OrderDetailRespDto respDto =  OrderDetailRespDto.from(detail);
+
+        asyncOrderProcessor.processOrderDetailAsync(reqDto, detail);
+        return respDto;
     }
+
+//
+//
+//
+//    //5초에 한번 실행
+//    @Scheduled(fixedRate = 10000)
+//    @Transactional
+//    public void processAccumulateOrder() {
+//        try {
+//            Map<String, String> orders = getAccumulateOrders();
+//            if (!orders.isEmpty()) {
+//                updateQuantityByAccumulated(orders);
+//            }
+//        } catch (Exception e) {
+//            // 로그 기록
+//            throw new RuntimeException("Failed to process accumulated orders", e);
+//        }
+//    }
+//
+//    public Map<String, String> getAccumulateOrders() throws Exception {
+//        Lock lock = redisLockRegistry.obtain("order-update-lock");
+//        lock.lock();
+//        try {
+//            Map<String, String> orders = redisService.getAllHashOps("order");
+//            if (orders != null && !orders.isEmpty()) {
+//                redisService.deleteValues("order");
+//                return orders;
+//            }
+//            return Collections.emptyMap();
+//        } catch (Exception e) {
+//            throw new UnExpectedLockException("Failed to get accumulated orders: " + e.getMessage());
+//        } finally {
+//            lock.unlock();
+//        }
+//    }
+//
+//    @Transactional
+//    public void updateQuantityByAccumulated(Map<String, String> orders) {
+//        orders.forEach((k, v) -> {
+//            try {
+//                updateSingleProductQuantity(Long.parseLong(k), Long.parseLong(v));
+//            } catch (Exception e) {
+//                // 로그 기록
+//                throw new RuntimeException("Failed to update quantity for product " + k, e);
+//            }
+//        });
+//    }
+//
+//    @Transactional
+//    public void updateSingleProductQuantity(Long productDetailId, Long quantity) throws Exception {
+//        productService.minusProductQuantity(productDetailId, quantity);
+//        Long saleQuantity = productDetailRepository.findSaleQuantityByProductDetailId(productDetailId).getSaleQuantity();
+//        redisService.setHashOps("stock", Map.of(String.valueOf(productDetailId), String.valueOf(saleQuantity)));
+//    }
+
 
     public OrderRespDto getOrder(Long orderId) {
         return OrderRespDto.from(orderRepository.findOrderByOrderId(orderId));
@@ -175,5 +245,13 @@ public class OrderService {
         throw new RuntimeException("반품 가능 상태가 아닙니다.");
     }
 
+    // convertToStringMap 메서드 (RedisService 클래스 내부 또는 유틸리티 클래스에 위치)
+    private Map<String, String> convertToStringMap(Map<Long, Long> map) {
+        return map.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue().toString()
+                ));
+    }
 
 }

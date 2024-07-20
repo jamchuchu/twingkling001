@@ -12,6 +12,8 @@ import com.sparta.twingkling001.product.entity.ProductDetail;
 import com.sparta.twingkling001.product.dto.request.ProductReqDto;
 import com.sparta.twingkling001.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,7 @@ public class ProductController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
+
     //물건 이름으로 들고오기
     @GetMapping("/name")
     public ResponseEntity<ApiResponse<List<ProductRespDto>>> getProductByProductName(@RequestParam String productName, int page) {

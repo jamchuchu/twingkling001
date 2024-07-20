@@ -1,5 +1,7 @@
 package com.sparta.twingkling001.product.service;
 
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.exception.product.NoStockException;
 import com.sparta.twingkling001.product.constant.DetailType;
@@ -12,15 +14,19 @@ import com.sparta.twingkling001.product.entity.Product;
 import com.sparta.twingkling001.product.entity.ProductDetail;
 import com.sparta.twingkling001.product.repository.ProductDetailRepository;
 import com.sparta.twingkling001.product.repository.ProductRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
     private final EntityManager entityManager;
+    private final JPAQueryFactory queryFactory;
+
 
     public ProductRespDto addProduct(ProductReqDto reqDto) {
         Product product = productRepository.save(Product.from(reqDto));
@@ -37,7 +45,7 @@ public class ProductService {
         return ProductRespDto.from(product, details);
     }
 
-
+    @Cacheable(value = "product", key = "#productId", cacheManager = "cacheManager")
     public ProductRespDto getProductByProductId(Long productId) {
         Product product = productRepository.findProductByProductId(productId);
         List<ProductDetail> details = productDetailRepository.findProductDetailsByProductId(productId);
@@ -112,6 +120,7 @@ public class ProductService {
         return details.stream().map(ProductDetailRespDto::from).toList();
     }
 
+
     @Transactional
     public void updateProductDetails(ProductDetailReqDto reqDto) throws DataNotFoundException {
         ProductDetail detail = entityManager.find(ProductDetail.class, reqDto.getProductDetailId());
@@ -133,17 +142,19 @@ public class ProductService {
         detail.setSaleQuantity(detail.getSaleQuantity()+1);
     }
 
-    public void minusProductQuantity(Long ProductDetailId) throws Exception {
-        ProductDetail detail = entityManager.find(ProductDetail.class, ProductDetailId);
-        if(detail == null){
+    @Transactional
+    public void minusProductQuantity(Long productDetailId, Long purchaseNum) throws Exception {
+        ProductDetail detail = entityManager.find(ProductDetail.class, productDetailId, LockModeType.PESSIMISTIC_WRITE);
+        if (detail == null) {
             throw new DataNotFoundException();
         }
-        if(detail.getSaleQuantity() > 0) {
-            detail.setSaleQuantity(detail.getSaleQuantity() - 1);
-        }else{
+        if (detail.getSaleQuantity() < purchaseNum) {
             throw new NoStockException();
         }
+        detail.setSaleQuantity(detail.getSaleQuantity() - purchaseNum);
+        // entityManager.merge(detail);  // 필요한 경우 명시적으로 merge
     }
+
 
     public void deleteProductDetails(Long productId) {
         productDetailRepository.deleteAllByProductId(productId);

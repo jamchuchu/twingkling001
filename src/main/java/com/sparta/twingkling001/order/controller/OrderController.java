@@ -36,24 +36,26 @@ public class OrderController {
 
     // 주문 작성 (주문 디테일 까지 다 받아서 작성)
     @Transactional
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> addOrder(@RequestBody OrderReqDto orderReqDto) {
         OrderRespDto response = orderService.addOrder(orderReqDto);
         List<OrderDetailReqDto> orderDetails = orderReqDto.getOrderDetailsList();
         List<OrderDetailRespDto> orderDetailRespDtoList = new ArrayList<>();
-        orderDetails.forEach(detail ->{
+        for(OrderDetailReqDto detail : orderDetails){
             try {
                 OrderDetailRespDto orderDetailRespDto = orderService.addOrderDetail(response.getOrderId(), detail);
                 orderDetailRespDtoList.add(orderDetailRespDto);
             }catch (Exception e){
                 log.info(e.getMessage());
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(ApiResponse.error(ErrorType.FAIL_ORDER));
             }
-        });
+        }
         response.setOrderDetails(orderDetailRespDtoList);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(SuccessType.SUCCESS));
-//                .body(ApiResponse.success(SuccessType.SUCCESS, response));
+                .body(ApiResponse.success(SuccessType.SUCCESS, response));
     }
 
     //주문 조회
@@ -82,7 +84,7 @@ public class OrderController {
     }
 
     // 멤버별, 상태별 주문 조회
-    @GetMapping("/{memberId}/state")
+    @GetMapping("/member/{memberId}/state")
     public ResponseEntity<ApiResponse<List<OrderRespDto>>> getOrderByMemberAndState(@PathVariable Long memberId, @RequestParam OrderState state) {
         List<OrderRespDto> response = orderService.getOrderByMemberAndState(memberId, state);
         response.stream().map(reqDto -> {

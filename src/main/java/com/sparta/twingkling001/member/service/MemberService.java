@@ -3,6 +3,7 @@ package com.sparta.twingkling001.member.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twingkling001.api.exception.ErrorType;
 import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
+import com.sparta.twingkling001.login.security.UserDetailsImpl;
 import com.sparta.twingkling001.member.dto.request.MemberDetailReqDto;
 import com.sparta.twingkling001.member.dto.request.MemberReqDtoByMail;
 import com.sparta.twingkling001.member.dto.response.MemberDetailRespDto;
@@ -15,9 +16,11 @@ import com.sparta.twingkling001.member.repository.MemberDetailRepository;
 import com.sparta.twingkling001.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,18 @@ public class MemberService {
     private final MemberDetailRepository memberDetailRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityManager entityManager;
+
+    // 현재 인증된 사용자 정보 가져오기
+
+    @PreAuthorize("hasAuthority('USER')")
+    public Member getPrincipal(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null){
+            throw new IllegalStateException("권한이 없습니다");
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userDetails.getMember();
+    }
 
     public long addMember(MemberReqDtoByMail memberReqDtoByMail) {
         Member member = Member.builder()

@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.product.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.sparta.twingkling001.product.constant.SaleState;
 import com.sparta.twingkling001.product.dto.request.ProductReqDto;
 import com.sparta.twingkling001.product.entity.Product;

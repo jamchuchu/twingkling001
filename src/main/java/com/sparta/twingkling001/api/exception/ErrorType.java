@@ -15,8 +15,8 @@ public enum ErrorType {
     LOGIN_FAIL(HttpStatus.UNAUTHORIZED, "로그인 실패"),
     NOT_FOUND_MEMBER(HttpStatus.UNAUTHORIZED, "사용자를 찾을 수 없습니다"),
     NOT_FOUND_STOCK(HttpStatus.NOT_FOUND, "재고가 없습니다"),
-    NOT_CANSEL(HttpStatus.BAD_REQUEST, "배송중에는 주문을 취소 할 수 없습니다");
-
+    NOT_CANSEL(HttpStatus.BAD_REQUEST, "배송중에는 주문을 취소 할 수 없습니다"),
+    FAIL_ORDER(HttpStatus.BAD_REQUEST, "재고부족으로 주문에 실패 하였습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

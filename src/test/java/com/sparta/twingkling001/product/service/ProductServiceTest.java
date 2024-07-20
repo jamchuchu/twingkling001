@@ -171,7 +171,7 @@ class ProductServiceTest {
         when(productRepository.findProductsByProductNameLike(productName)).thenReturn(products);
         when(productDetailRepository.findProductDetailsByProductId(any(Long.class))).thenReturn(new ArrayList<>());
 
-        List<ProductRespDto> response = productService.getProductByProductName(productName, PageRequest.of(1,1));
+        List<ProductRespDto> response = productService.getProductByProductName(productName, PageRequest.of(0,10));
 
         List<ProductRespDto> expected = new ArrayList<>();
         for (Product p : products) {
@@ -364,11 +364,14 @@ class ProductServiceTest {
     @DisplayName("판매 수량 감소 -- 재고 있음")
     void minusProductQuantitySuccess() throws Exception {
         Long productDetailId = 1L;
+        Long purchaseNum = 5L;
+
+
         ProductDetail productDetail = new ProductDetail(1L, 100L, DetailType.COLOR, "yellow", 100L, SaleState.ON_SALE, 10000L);
         when(entityManager.find(ProductDetail.class, productDetailId)).thenReturn(productDetail);
 
         // When
-        productService.minusProductQuantity(productDetailId);
+        productService.minusProductQuantity(productDetailId, purchaseNum );
 
         // Then
         verify(entityManager).find(ProductDetail.class, productDetailId);
@@ -380,12 +383,13 @@ class ProductServiceTest {
     @DisplayName("판매 수량 감소 -- 재고 없음")
     void minusProductQuantityFail() {
         Long productDetailId = 1L;
+        Long purchaseNum = 5L;
         ProductDetail productDetail = new ProductDetail(1L, 100L, DetailType.COLOR, "yellow", 0L, SaleState.ON_SALE, 10000L);
         when(entityManager.find(ProductDetail.class, productDetailId)).thenReturn(productDetail);
 
         // When & Then
         assertThrows(NoStockException.class, () -> {
-            productService.minusProductQuantity(productDetailId);
+            productService.minusProductQuantity(productDetailId, purchaseNum);
         });
 
         // Verify

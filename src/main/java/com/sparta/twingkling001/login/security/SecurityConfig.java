@@ -62,22 +62,19 @@ public class SecurityConfig {
 //
 //                .sessionManagement(AbstractHttpConfigurer::disable)
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                .authorizeHttpRequests((authorizationRequests) ->
-                                authorizationRequests
-                                .anyRequest().permitAll()
-//                                        .requestMatchers("/api/login").permitAll()
-//                                        .requestMatchers("/logout").permitAll()
-//                                        .requestMatchers( "/test").permitAll()
-//                                        .requestMatchers("/test").hasRole(Role.USER.getAuthority())
-//                                        .requestMatchers("*/users").hasRole(Role.USER.getAuthority())
-//                                .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
-//                                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
-//                                        .anyRequest().authenticated()
-
-
+//
+                .authorizeHttpRequests((authorizationRequests) -> authorizationRequests
+                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/login").permitAll()
+//                        .requestMatchers("/api/**").permitAll()
+//                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+//                         .requestMatchers("/api/*").hasRole(Role.USER.getAuthority())\
+//                         .requestMatchers("/sellers").hasRole(Role.SELLER.getAuthority())
+//                        .requestMatchers(new RegexRequestMatcher("^/api/.*/permit/.*$", null)).permitAll()
+//                        .anyRequest().authenticated()
                 );
-        // 필터 관리
+
+//        // 필터 관리
 //        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
 //        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

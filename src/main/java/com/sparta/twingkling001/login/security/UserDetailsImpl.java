@@ -2,6 +2,7 @@ package com.sparta.twingkling001.login.security;
 
 import com.sparta.twingkling001.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
     private final Member member;
 
+    @Bean
     public Member getMember() {
         return member;
     }

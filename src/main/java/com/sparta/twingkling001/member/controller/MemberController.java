@@ -37,6 +37,13 @@ public class MemberController {
     private final MemberAddressService memberAddressService;
     private final AddressService addressService;
 
+    @GetMapping("/principal")
+    public ResponseEntity<ApiResponse<?>> getPrincipal() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(SuccessType.SUCCESS, memberService.getPrincipal()));
+    }
+
     //회원가입
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<?>> signup(@RequestBody MemberReqDtoByMail memberReqDtoByMail) throws Exception {
@@ -84,6 +91,7 @@ public class MemberController {
 
         }
     }
+
 
 
     @GetMapping("/{memberId}")

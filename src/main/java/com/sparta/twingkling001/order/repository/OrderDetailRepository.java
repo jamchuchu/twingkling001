@@ -10,4 +10,5 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
     List<OrderDetail> findOrderDetailsByOrder_OrderIdAndDeletedYnFalse(Long orderId);
     OrderDetail findOrderDetailByOrderDetailId(Long orderDetailId);
+    void removeOrderDetailByOrOrderDetailId(Long orderDetailId);
 }
