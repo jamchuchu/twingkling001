@@ -617,7 +617,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 ### 결론
 최종적으로 Redis를 사용하지 않고 비동기 처리만을 적용한 방식은 
-Apdex 스코어 0.714를 기록하며, 대량 주문 처리 시 안정적인 성능을 보여주었습니다.
+Apdex 스코어 0.714를 기록하며,   대량 주문 처리 시 안정적인 성능을 보여주었습니다.
 
 </br></br>
 
