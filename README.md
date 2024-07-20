@@ -198,6 +198,190 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 
 ```
 
+### 전체 프로젝트 구조도
+<details>
+<summary> 펼치기/접기</summary>
+
+```
+📦twingkling001
+ ┣ 📂address
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜AddressController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┗ 📜AddressReqDto.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜AddressRespDto.java
+ ┃ ┃ ┃ ┗ 📜PublicRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┗ 📜Address.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┗ 📜AddressRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜AddressService.java
+ ┣ 📂api
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📂cart
+ ┃ ┃ ┃ ┗ 📜CartAlreadyExistsException.java
+ ┃ ┃ ┣ 📂general
+ ┃ ┃ ┃ ┣ 📜AlreadyDeletedException.java
+ ┃ ┃ ┃ ┗ 📜DataNotFoundException.java
+ ┃ ┃ ┣ 📂product
+ ┃ ┃ ┃ ┣ 📜NoStockException.java
+ ┃ ┃ ┃ ┗ 📜UnExpectedLockException.java
+ ┃ ┃ ┗ 📜ErrorType.java
+ ┃ ┗ 📂response
+ ┃ ┃ ┣ 📜ApiResponse.java
+ ┃ ┃ ┗ 📜SuccessType.java
+ ┣ 📂cart
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜CartController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┗ 📜CartDetailReqDto.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜CartDetailRespDto.java
+ ┃ ┃ ┃ ┗ 📜CartRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┣ 📜Cart.java
+ ┃ ┃ ┗ 📜CartDetail.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┣ 📜CartDetailRepository.java
+ ┃ ┃ ┗ 📜CartRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜CartService.java
+ ┣ 📂category
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜CategoryController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┗ 📜CategoryRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┗ 📜Category.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┗ 📜CategoryRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜CategoryService.java
+ ┣ 📂config
+ ┃ ┣ 📜EncoderConfig.java
+ ┃ ┣ 📜QuerydslConfig.java
+ ┃ ┗ 📜SwaggerConfig.java
+ ┣ 📂like
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜LikeController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┗ 📜LikeRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┗ 📜Like.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┗ 📜LikeRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜LikeService.java
+ ┣ 📂login
+ ┃ ┣ 📂jwt
+ ┃ ┃ ┣ 📜Constant.java
+ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┗ 📜JwtToken.java
+ ┃ ┣ 📂mailSignup
+ ┃ ┃ ┣ 📜MailConfig.java
+ ┃ ┃ ┗ 📜MailService.java
+ ┃ ┣ 📂security
+ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┣ 📜JwtAuthorizationFilter.java
+ ┃ ┃ ┣ 📜SecurityConfig.java
+ ┃ ┃ ┣ 📜UserDetailsImpl.java
+ ┃ ┃ ┗ 📜UserDetailsServiceImpl.java
+ ┃ ┗ 📜LoginReqDto.java
+ ┣ 📂member
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜MemberController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜MemberAddressReqDto.java
+ ┃ ┃ ┃ ┣ 📜MemberDetailReqDto.java
+ ┃ ┃ ┃ ┗ 📜MemberReqDtoByMail.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜MemberAddressRespDto.java
+ ┃ ┃ ┃ ┣ 📜MemberDetailRespDto.java
+ ┃ ┃ ┃ ┗ 📜MemberRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┣ 📜Member.java
+ ┃ ┃ ┣ 📜MemberAddress.java
+ ┃ ┃ ┣ 📜MemberDetail.java
+ ┃ ┃ ┗ 📜Role.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┣ 📜MemberAddressRepository.java
+ ┃ ┃ ┣ 📜MemberDetailRepository.java
+ ┃ ┃ ┗ 📜MemberRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┣ 📜MemberAddressService.java
+ ┃ ┃ ┗ 📜MemberService.java
+ ┣ 📂order
+ ┃ ┣ 📂constant
+ ┃ ┃ ┣ 📜OrderConstants.java
+ ┃ ┃ ┗ 📜OrderState.java
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜OrderController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜OrderDetailReqDto.java
+ ┃ ┃ ┃ ┣ 📜OrderQuantityReqDto.java
+ ┃ ┃ ┃ ┣ 📜OrderReceiveReqDto.java
+ ┃ ┃ ┃ ┗ 📜OrderReqDto.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜OrderDetailRespDto.java
+ ┃ ┃ ┃ ┗ 📜OrderRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┣ 📜Order.java
+ ┃ ┃ ┗ 📜OrderDetail.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┣ 📜OrderDetailRepository.java
+ ┃ ┃ ┗ 📜OrderRepository.java
+ ┃ ┣ 📂scheduler
+ ┃ ┃ ┗ 📜OrderScheduler.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┣ 📜AsyncOrderProcessor.java
+ ┃ ┃ ┗ 📜OrderService.java
+ ┣ 📂pay
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜PayController.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┗ 📜Pay.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┗ 📜PayRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜PayService.java
+ ┣ 📂product
+ ┃ ┣ 📂constant
+ ┃ ┃ ┣ 📜DetailType.java
+ ┃ ┃ ┗ 📜SaleState.java
+ ┃ ┣ 📂controller
+ ┃ ┃ ┗ 📜ProductController.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜ProductDetailReqDto.java
+ ┃ ┃ ┃ ┗ 📜ProductReqDto.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜ProductDetailRespDto.java
+ ┃ ┃ ┃ ┗ 📜ProductRespDto.java
+ ┃ ┣ 📂entity
+ ┃ ┃ ┣ 📜Product.java
+ ┃ ┃ ┗ 📜ProductDetail.java
+ ┃ ┣ 📂repository
+ ┃ ┃ ┣ 📜ProductDetailRepository.java
+ ┃ ┃ ┗ 📜ProductRepository.java
+ ┃ ┗ 📂service
+ ┃ ┃ ┗ 📜ProductService.java
+ ┣ 📂redis
+ ┃ ┣ 📜RedisConfig.java
+ ┃ ┗ 📜RedisService.java
+ ┣ 📜TestController.java
+ ┗ 📜Twingkling001Application.java
+```
+
+</details>
+
 ### 특징
 <details>
 <summary>펼치기/접기</summary>  
