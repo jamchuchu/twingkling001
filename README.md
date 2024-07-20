@@ -52,7 +52,8 @@
 
 
 ## 📊 ERD
-https://www.erdcloud.com/d/BatZefBiFtRkQefui
+https://www.erdcloud.com/d/BatZefBiFtRkQefui    
+</br>
 ![image](https://github.com/user-attachments/assets/d720ff2d-1a2d-4ff4-99d4-89b2face7ceb)
 ### 📘 ERD 설계 상세 설명
 
@@ -516,7 +517,6 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 ## ✉️ 이메일 인증을 통한 회원가입 프로세스
 ![image](https://github.com/user-attachments/assets/19e6db55-6d66-4c5d-986b-3be64863f34a)
-https://janchu.tistory.com/114
 
 <details>
 <summary>펼치기/접기</summary>
@@ -535,6 +535,10 @@ https://janchu.tistory.com/114
     - 서버로 인증 요청 전송
 5. 인증 완료 및 토큰 발급
     - 서버가 인증을 확인하고 사용자에게 토큰 발급
+  
+## 사용 예시
+https://janchu.tistory.com/114
+
 </details>
 </br></br>
 
@@ -621,27 +625,15 @@ https://janchu.tistory.com/114
 
 </br></br>
 
+
+
 ## 📚학습정리
-### ORM
-</br></br>
+### 🗃️ ORM
+### 🔒 [transaction 격리 수준](https://janchu.tistory.com/109)
+### 🛡️ [security](https://janchu.tistory.com/115)
+### 🐳 docker
+### 🔄 [CI/CD](https://janchu.tistory.com/113)
+### 🌐 [외부 api 사용](https://janchu.tistory.com/116)
 
-### transaction 격리 수준
-https://janchu.tistory.com/109
-</br></br>
-
-### security
-https://janchu.tistory.com/115
-</br></br>
-
-### docker
-</br></br>
-
-### CI/CD
-https://janchu.tistory.com/113
-</br></br>
-
-### 외부 api 사용
-https://janchu.tistory.com/116
-</br></br>
 
 
