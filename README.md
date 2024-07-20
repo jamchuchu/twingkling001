@@ -23,6 +23,34 @@
 ```
 
 
+## 🛠 기술스택
+**Tech Stack**                                                                                                   
+- Spring Boot 3.3.1
+- Spring Data JPA
+- Spring Security
+
+**Storage**                                                                                                                                                                                               
+- AWS RDS(MySQL)
+- Redis 3.2.7 (인메모리 캐시)
+
+**CI/CD & DevOps**                                                                                                                                                                               
+- AWS EC2
+- Docker & DockerHub
+- Github Actions
+
+**Test**
+- JUnit5
+- JMeter
+
+**기타**
+- Java 21
+- Swagger (SpringDoc OpenAPI) 2.0.4
+- JWT 0.11.5
+- Jasypt 3.0.5
+  
+</br></br>
+
+
 ## 📊 ERD
 https://www.erdcloud.com/d/BatZefBiFtRkQefui
 ![image](https://github.com/user-attachments/assets/d720ff2d-1a2d-4ff4-99d4-89b2face7ceb)
@@ -133,27 +161,6 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 </br></br>
 
 
-## 🛠 기술스택
- **Tech Stack**                                                                                                   
-
-- Spring Boot
-- Spring JPA
-
-**DB**                                                                                                                                                                                               
-- AWS RDS(Mysql)
-- Redis
-
-**CI/CD & DevOps**                                                                                                                                                                               
-- AWS EC2
-- Docker & DokcerHub
-- Github Action
-
-**Test**
-- Junit5
-- Jmeter
-  
-</br></br>
-
 ## 📂 파일구조도
 
 ### 전체 구조
@@ -171,7 +178,7 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 
 ```
 
-### 모듈별 상세 구조
+### 패키지별 상세 구조
 
 ```
 📂product
@@ -383,15 +390,18 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 </details>
 
 ### 특징
-<details>
-<summary>펼치기/접기</summary>  
 
-- **모듈화**: 각 기능(address, cart, category 등)이 독립적인 모듈로 구성되어 있습니다.
-- **계층 분리**: 각 모듈 내에서 controller, service, repository 등의 계층이 명확히 분리되어 있습니다.
-- **DTO 패턴**: request와 response DTO를 분리하여 데이터 전송 객체를 효과적으로 관리합니다.
+<details>
+<summary>펼치기/접기</summary>
+
+- **계층형 아키텍처**: 계층형 아키텍처를 적용하여 각 계층 간의 의존성 방향이 아래로 향하도록 구현했습니다.  
+ 관심사의 분리와 코드의 재사용성을 높였습니다.
+- **DTO 패턴**: 요청과 응답 DTO를 분리하여 데이터 전송 객체를 효과적으로 관리합니다.
 - **상수 관리**: constant 패키지를 통해 열거형 상수들을 관리합니다.
 - **엔티티 분리**: 데이터베이스 엔티티들이 entity 패키지에 명확히 정의되어 있습니다.
+
 </details>
+
 
 
 
@@ -400,7 +410,6 @@ https://www.notion.so/API-7dc60dd21e784f9e8ddf85740db74dc4
 <details>
 <summary>펼치기/접기</summary>
 
-- **유지보수성**: 각 기능이 모듈화되어 있어 유지보수가 용이합니다.
 - **확장성**: 새로운 기능 추가 시 기존 구조를 따라 쉽게 확장할 수 있습니다.
 - **가독성**: 일관된 구조로 인해 코드 탐색과 이해가 쉽습니다.
 - **협업**: 개발자 간 작업 영역을 명확히 구분할 수 있어 협업에 유리합니다.
@@ -583,22 +592,22 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 
 
 
-## 주요 문제점
+### 주요 문제점
 1. 대량 주문 시 처리 속도 저하 (0.041 Apdex 스코어)
 2. 5000건 주문 시 일부 재고만 차감되는 문제 (500건만 처리됨)
 3. 동시 주문에 대한 재고 처리 불일치
 
-## 해결 과정
+### 해결 과정
 1. Redis를 활용한 캐싱 시도
 2. 비동기 처리 도입
 3. 데이터베이스와 Redis 동시 업데이트 전략
-4. 행 락(Row Lock) 적용
+4. 비관적 lock 적용
 
-## 최종 채택 솔루션
+### 최종 채택 솔루션
 비동기 처리를 통한 DB 저장 및 Redis 입력 동시 수행, 최대 수준의 행 락 적용
 
-## 성능 테스트 결과
-| 테스트 조건 | 테스트 수 | Apdex 스코어 | 비고 |
+### 성능 테스트 결과
+| 테스트 조건 | 테스트 수 | Apdex 스코어 | 처리 개수 |
 | --- | --- | --- | --- |
 | 10개 단건 주문 | 10 | 1.000 |  |
 |  다량 주문 | 1000*5 | 0.041 | 5000건 중 500건 삭제 |
@@ -606,7 +615,7 @@ public static <T> ApiResponse<T> error(ErrorType errorType, T data) { ... }
 | DB/Redis 비동기 처리 | 500*5 | 0.584 | 3000건 중 재고 약 1200건 삭제 |
 | Redis 미사용, 비동기 처리 | 1000*5 | 0.714 | 5000r건 중 재고 5000건 삭제 |
 
-## 결론
+### 결론
 최종적으로 Redis를 사용하지 않고 비동기 처리만을 적용한 방식은 
 Apdex 스코어 0.714를 기록하며, 대량 주문 처리 시 안정적인 성능을 보여주었습니다.
 
