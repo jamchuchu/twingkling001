@@ -34,7 +34,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
     private final EntityManager entityManager;
-    private final JPAQueryFactory queryFactory;
 
 
     public ProductRespDto addProduct(ProductReqDto reqDto) {
@@ -118,6 +117,12 @@ public class ProductService {
     public List<ProductDetailRespDto> getProductDetailByProductId(Long productId) {
         List<ProductDetail> details = productDetailRepository.findProductDetailsByProductId(productId);
         return details.stream().map(ProductDetailRespDto::from).toList();
+    }
+
+
+    public ProductDetailRespDto getProductDetailByProductDetailId(Long productDetailId) {
+        ProductDetail detail = productDetailRepository.findProductDetailByProductDetailId(productDetailId);
+        return ProductDetailRespDto.from(detail);
     }
 
 

@@ -1,6 +1,7 @@
 package com.sparta.twingkling001.order.controller;
 
 import com.sparta.twingkling001.api.exception.ErrorType;
+import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.response.ApiResponse;
 import com.sparta.twingkling001.api.response.SuccessType;
 import com.sparta.twingkling001.order.constant.OrderConstants;
@@ -39,20 +40,6 @@ public class OrderController {
     @PostMapping("")
     public ResponseEntity<?> addOrder(@RequestBody OrderReqDto orderReqDto) {
         OrderRespDto response = orderService.addOrder(orderReqDto);
-        List<OrderDetailReqDto> orderDetails = orderReqDto.getOrderDetailsList();
-        List<OrderDetailRespDto> orderDetailRespDtoList = new ArrayList<>();
-        for(OrderDetailReqDto detail : orderDetails){
-            try {
-                OrderDetailRespDto orderDetailRespDto = orderService.addOrderDetail(response.getOrderId(), detail);
-                orderDetailRespDtoList.add(orderDetailRespDto);
-            }catch (Exception e){
-                log.info(e.getMessage());
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body(ApiResponse.error(ErrorType.FAIL_ORDER));
-            }
-        }
-        response.setOrderDetails(orderDetailRespDtoList);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(SuccessType.SUCCESS, response));
@@ -60,7 +47,7 @@ public class OrderController {
 
     //주문 조회
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<OrderRespDto>> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<OrderRespDto>> getOrder(@PathVariable Long orderId) throws DataNotFoundException {
         OrderRespDto response = orderService.getOrder(orderId);
         List<OrderDetailRespDto> orderDetails = orderService.getOrderDetailByOrder(orderId);
         response.setOrderDetails(orderDetails);

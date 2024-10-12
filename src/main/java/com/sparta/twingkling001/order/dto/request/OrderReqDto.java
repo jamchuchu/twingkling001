@@ -31,4 +31,8 @@ public class OrderReqDto {
     private Long payId;
 
     private List<OrderDetailReqDto> orderDetailsList;
+
+    public void setOrderState(OrderState orderState) {
+        this.orderState = orderState;
+    }
 }

@@ -44,12 +44,9 @@ dependencies {
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.2.7'
     implementation 'org.springframework.integration:spring-integration-redis'
-
-
 
     //naver mail
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
@@ -77,10 +74,10 @@ dependencies {
 
 }
 
-
 //compileJava {
 //    options.compilerArgs << '-parameters'
 //}
+
 tasks.named('test') {
     useJUnitPlatform()
 }

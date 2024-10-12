@@ -4,17 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -24,8 +19,7 @@ public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
-
-
+    // Value operations
     public void setValues(String key, Object data) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(data);
         ValueOperations<String, String> values = redisTemplate.opsForValue();
@@ -40,17 +34,13 @@ public class RedisService {
     @Transactional(readOnly = true)
     public String getValues(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        String json = (String) values.get(key);
-        if (json == null) {
-            return null;
-        }
-        return values.get(key).toString();
+        return values.get(key);
     }
 
     @Transactional(readOnly = true)
     public <T> T getValues(String key, Class<T> valueType) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        String json = (String) values.get(key);
+        String json = values.get(key);
         if (json == null) {
             return null;
         }
@@ -62,9 +52,7 @@ public class RedisService {
         }
     }
 
-    // Key-Set
-
-
+    // Set operations
     public void addSetValue(String key, String value) {
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
         setOps.add(key, value);
@@ -80,43 +68,69 @@ public class RedisService {
         setOps.remove(key, value);
     }
 
+    // Hash operations
+    public void setHashValue(String key, String hashKey, Object value) throws JsonProcessingException {
+        HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
+        hashOps.put(key, hashKey, objectMapper.writeValueAsString(value));
+    }
+
+    public <T> T getHashValue(String key, String hashKey, Class<T> valueType) {
+        HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
+        String json = hashOps.get(key, hashKey);
+        if (json == null) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(json, valueType);
+        } catch (JsonProcessingException e) {
+            log.error("Error deserializing JSON from hash", e);
+            return null;
+        }
+    }
+
+    public Map<String, String> getHashValues(String key) {
+        HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
+        return hashOps.entries(key);
+    }
+
+    // Delete operations
     public void deleteValues(String key) {
         redisTemplate.delete(key);
     }
 
-    public void expireValues(String key, int timeout) {
-        redisTemplate.expire(key, timeout, TimeUnit.MILLISECONDS);
+    // Expiration operations
+    public Boolean setExpire(String key, long timeout, TimeUnit unit) {
+        return redisTemplate.expire(key, timeout, unit);
     }
 
-
-    public void setHashOps(String key, Map<String, String> data) {
-        HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
-        values.putAll(key, data);
+    public Long getExpire(String key, TimeUnit unit) {
+        return redisTemplate.getExpire(key, unit);
     }
 
-    @Transactional(readOnly = true)
-    public String getHashOps(String key, String hashKey) {
-        HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
-        return Boolean.TRUE.equals(values.hasKey(key, hashKey)) ? (String) redisTemplate.opsForHash().get(key, hashKey) : "";
+    // Check if key exists
+    public Boolean hasKey(String key) {
+        return redisTemplate.hasKey(key);
     }
 
-    public Map<String, String> getAllHashOps(String key) {
-        Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
-        Map<String, String> result = new HashMap<>();
-        for (Map.Entry<Object, Object> entry : entries.entrySet()) {
-            result.put(entry.getKey().toString(), entry.getValue().toString());
+    // 큐에 메시지 추가
+    public void addToQueue(String queueName, Object data) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(data);
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        listOps.rightPush(queueName, json);
+    }
+
+    // 큐에서 메시지 가져오기
+    public <T> T popFromQueue(String queueName, Class<T> valueType) throws JsonProcessingException {
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        String json = listOps.leftPop(queueName);
+        if (json == null) {
+            return null;
         }
-        return result;
+        return objectMapper.readValue(json, valueType);
     }
 
-
-
-    public void deleteHashOps(String key, String hashKey) {
-        HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
-        values.delete(key, hashKey);
-    }
-
-    public boolean checkExistsValue(String value) {
-        return !value.equals("false");
+    // 큐의 길이 확인
+    public Long getQueueSize(String queueName) {
+        return redisTemplate.opsForList().size(queueName);
     }
 }

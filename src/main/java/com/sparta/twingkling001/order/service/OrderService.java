@@ -1,5 +1,6 @@
 package com.sparta.twingkling001.order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.twingkling001.api.exception.general.DataNotFoundException;
 import com.sparta.twingkling001.api.exception.product.NoStockException;
 import com.sparta.twingkling001.api.exception.product.UnExpectedLockException;
@@ -20,7 +21,9 @@ import com.sparta.twingkling001.redis.RedisService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.integration.redis.util.RedisLockRegistry;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -40,95 +44,79 @@ public class OrderService {
 
     private final OrderRepository  orderRepository;
     private final OrderDetailRepository orderDetailRepository;
-    private final ProductDetailRepository productDetailRepository;
     private final EntityManager entityManager;
     private final RedisService redisService;
-    private final RedisLockRegistry redisLockRegistry;
-    private final AsyncOrderProcessor asyncOrderProcessor;
+
+    private static final String ORDER_QUEUE_KEY = "order:queue";
 
 
+    @Async
+    public void addOrderAsync(OrderReqDto orderReqDto) {
+        try {
+            redisService.addToQueue(ORDER_QUEUE_KEY, orderReqDto);
+            log.info("Order added to queue: {}", orderReqDto);
+        } catch (Exception e) {
+            log.error("Error adding order to queue", e);
+        }
+    }
 
-
-    public OrderRespDto addOrder(OrderReqDto orderReqDto) {
-        Order order = Order.from(orderReqDto);
-        return OrderRespDto.from(orderRepository.save(order));
+    @Scheduled(fixedDelay = 100) // 100ms마다 실행
+    public void processOrderQueue() {
+        if(getRemainingOrderCount() == 0){
+            return;
+        }
+        try {
+            OrderReqDto orderReqDto = redisService.popFromQueue(ORDER_QUEUE_KEY, OrderReqDto.class);
+            if (orderReqDto != null) {
+                processOrder(orderReqDto);
+            }
+        } catch (Exception e) {
+            log.error("Error processing order from queue", e);
+        }
     }
 
     @Transactional
-    public OrderDetailRespDto addOrderDetail(Long orderId, OrderDetailReqDto reqDto) throws Exception {
-        Order order = entityManager.find(Order.class, orderId);
-        if(order == null){
-            throw new DataNotFoundException();
+    public void processOrder(OrderReqDto orderReqDto) {
+        // 여기에 주문 처리 로직 구현
+        //재고확인
+        try {
+            orderReqDto.getOrderDetailsList().forEach(detail -> {
+                Long productDetailId = detail.getProductDetailId();
+                if (productService.getProductDetailByProductDetailId(productDetailId).getSaleQuantity() < detail.getQuantity()) {
+                    throw new IllegalStateException("재고 없습니다.");
+                }else{
+                    try {
+                        productService.minusProductQuantity(detail.getProductDetailId() , detail.getQuantity());
+                        log.info(String.valueOf(productService.getProductDetailByProductDetailId(detail.getProductDetailId()).getSaleQuantity()));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }catch (Exception e){
+            orderReqDto.setOrderState(OrderState.FAILED);
         }
-        if(productDetailRepository.findProductDetailByProductDetailId(reqDto.getProductDetailId()).getSaleQuantity() == 0){
-            throw new NoStockException();
-        }
-
-        //redis 입력
-        OrderDetail detail = OrderDetail.from(order, reqDto);
-        OrderDetailRespDto respDto =  OrderDetailRespDto.from(detail);
-
-        asyncOrderProcessor.processOrderDetailAsync(reqDto, detail);
-        return respDto;
+        //주문 생성
+        addOrder(orderReqDto);
+        log.info("Processing order: {}", orderReqDto);
     }
 
-//
-//
-//
-//    //5초에 한번 실행
-//    @Scheduled(fixedRate = 10000)
-//    @Transactional
-//    public void processAccumulateOrder() {
-//        try {
-//            Map<String, String> orders = getAccumulateOrders();
-//            if (!orders.isEmpty()) {
-//                updateQuantityByAccumulated(orders);
-//            }
-//        } catch (Exception e) {
-//            // 로그 기록
-//            throw new RuntimeException("Failed to process accumulated orders", e);
-//        }
-//    }
-//
-//    public Map<String, String> getAccumulateOrders() throws Exception {
-//        Lock lock = redisLockRegistry.obtain("order-update-lock");
-//        lock.lock();
-//        try {
-//            Map<String, String> orders = redisService.getAllHashOps("order");
-//            if (orders != null && !orders.isEmpty()) {
-//                redisService.deleteValues("order");
-//                return orders;
-//            }
-//            return Collections.emptyMap();
-//        } catch (Exception e) {
-//            throw new UnExpectedLockException("Failed to get accumulated orders: " + e.getMessage());
-//        } finally {
-//            lock.unlock();
-//        }
-//    }
-//
-//    @Transactional
-//    public void updateQuantityByAccumulated(Map<String, String> orders) {
-//        orders.forEach((k, v) -> {
-//            try {
-//                updateSingleProductQuantity(Long.parseLong(k), Long.parseLong(v));
-//            } catch (Exception e) {
-//                // 로그 기록
-//                throw new RuntimeException("Failed to update quantity for product " + k, e);
-//            }
-//        });
-//    }
-//
-//    @Transactional
-//    public void updateSingleProductQuantity(Long productDetailId, Long quantity) throws Exception {
-//        productService.minusProductQuantity(productDetailId, quantity);
-//        Long saleQuantity = productDetailRepository.findSaleQuantityByProductDetailId(productDetailId).getSaleQuantity();
-//        redisService.setHashOps("stock", Map.of(String.valueOf(productDetailId), String.valueOf(saleQuantity)));
-//    }
+    // 큐에 남아있는 주문 수 확인
+    public Long getRemainingOrderCount() {
+        return redisService.getQueueSize(ORDER_QUEUE_KEY);
+    }
 
+    public OrderRespDto addOrder(OrderReqDto orderReqDto){
+        Order order = orderRepository.save(Order.from(orderReqDto));
+        orderReqDto.getOrderDetailsList().forEach(detail -> {
+            orderDetailRepository.save(OrderDetail.from(order, detail));
+        });
+        return OrderRespDto.from(order);
+    }
 
-    public OrderRespDto getOrder(Long orderId) {
-        return OrderRespDto.from(orderRepository.findOrderByOrderId(orderId));
+    public OrderRespDto getOrder(Long orderId) throws DataNotFoundException {
+        return OrderRespDto.from(orderRepository.findOrderByOrderId(orderId)
+                .orElseThrow(() -> new DataNotFoundException("주문을 찾을 수 없습니다. 주문 ID: " + orderId)));
     }
 
     public List<OrderDetailRespDto> getOrderDetailByOrder(Long orderId) {
@@ -255,3 +243,4 @@ public class OrderService {
     }
 
 }
+

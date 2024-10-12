@@ -126,7 +126,7 @@ public class ProductController {
 
     //판매 추가 정보만 들고오기
     @GetMapping("/{productId}/details")
-    public ResponseEntity<ApiResponse<List<ProductDetailRespDto>>> getProductDetailByProductId(@PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<List<ProductDetailRespDto>>> getProductDetailByProductId(@PathVariable("productId") Long productId) {
         List<ProductDetailRespDto> response = productService.getProductDetailByProductId(productId);
         return ResponseEntity
                 .status(HttpStatus.OK)

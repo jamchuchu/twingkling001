@@ -13,7 +13,9 @@ public enum OrderState {
     SHIPPED("배송중"),
     DELIVERY_COMPLETED("배송완료"),
 
-    CANSEL("취소완료");
+    CANSEL("취소완료"),
+
+    FAILED("주문 실패");
 
     private final String orderState;
 }
